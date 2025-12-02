@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Instagram, Facebook, Twitter, MapPin, Phone, Mail } from "lucide-react";
 import { useData } from "@/context/DataContext";
