@@ -196,18 +196,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const updateSiteContent = async (content: Partial<SiteContent>) => {
         // Map camelCase to snake_case for DB
         const dbContent: any = {};
-        if (content.heroTitle) dbContent.hero_title = content.heroTitle;
-        if (content.heroSubtitle) dbContent.hero_subtitle = content.heroSubtitle;
-        if (content.aboutTitle) dbContent.about_title = content.aboutTitle;
-        if (content.aboutText) dbContent.about_text = content.aboutText;
-        if (content.footerDescription) dbContent.footer_description = content.footerDescription;
-        if (content.contactAddress) dbContent.contact_address = content.contactAddress;
-        if (content.contactPhone) dbContent.contact_phone = content.contactPhone;
-        if (content.contactEmail) dbContent.contact_email = content.contactEmail;
-        if (content.workingHours) dbContent.working_hours = content.workingHours;
-        if (content.socialInstagram) dbContent.social_instagram = content.socialInstagram;
-        if (content.socialFacebook) dbContent.social_facebook = content.socialFacebook;
-        if (content.socialTwitter) dbContent.social_twitter = content.socialTwitter;
+        if (content.heroTitle !== undefined) dbContent.hero_title = content.heroTitle;
+        if (content.heroSubtitle !== undefined) dbContent.hero_subtitle = content.heroSubtitle;
+        if (content.aboutTitle !== undefined) dbContent.about_title = content.aboutTitle;
+        if (content.aboutText !== undefined) dbContent.about_text = content.aboutText;
+        if (content.footerDescription !== undefined) dbContent.footer_description = content.footerDescription;
+        if (content.contactAddress !== undefined) dbContent.contact_address = content.contactAddress;
+        if (content.contactPhone !== undefined) dbContent.contact_phone = content.contactPhone;
+        if (content.contactEmail !== undefined) dbContent.contact_email = content.contactEmail;
+        if (content.workingHours !== undefined) dbContent.working_hours = content.workingHours;
+        if (content.socialInstagram !== undefined) dbContent.social_instagram = content.socialInstagram;
+        if (content.socialFacebook !== undefined) dbContent.social_facebook = content.socialFacebook;
+        if (content.socialTwitter !== undefined) dbContent.social_twitter = content.socialTwitter;
 
         const { error } = await supabase.from('site_content').update(dbContent).eq('id', 1);
         if (error) console.error("Error updating content:", error);
