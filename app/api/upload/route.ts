@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(request: Request) {
     try {
@@ -14,19 +13,33 @@ export async function POST(request: Request) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Create a unique filename to avoid overwrites (optional, but good practice)
-        // For now, we'll keep the original name but maybe prepend a timestamp if needed.
-        // Let's just use the original name for simplicity as per user request context, 
-        // but sanitizing it is good.
-        const filename = file.name.replace(/\s+/g, "-");
-        const uploadDir = path.join(process.cwd(), "public/images/products");
-        const filepath = path.join(uploadDir, filename);
+        // Create a unique filename
+        const timestamp = Date.now();
+        const filename = `${timestamp}-${file.name.replace(/\s+/g, "-")}`;
 
-        await writeFile(filepath, buffer);
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from('products')
+            .upload(filename, buffer, {
+                contentType: file.type,
+                upsert: false
+            });
+
+        if (uploadError) {
+            console.error("Supabase upload error:", uploadError);
+            return NextResponse.json({ success: false, message: "Upload failed: " + uploadError.message }, { status: 500 });
+        }
+
+        // Get Public URL
+        const { data: { publicUrl } } = supabase
+            .storage
+            .from('products')
+            .getPublicUrl(filename);
 
         return NextResponse.json({
             success: true,
-            url: `/images/products/${filename}`
+            url: publicUrl
         });
 
     } catch (error) {
