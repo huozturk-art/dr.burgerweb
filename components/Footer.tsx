@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Instagram, Facebook, Twitter, MapPin, Phone, Mail } from "lucide-react";
+import { useData } from "@/context/DataContext";
 
 const Footer = () => {
+    const { siteContent } = useData();
+
     return (
         <footer className="bg-black border-t border-white/10 pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,8 +15,7 @@ const Footer = () => {
                             DR. BURGER
                         </h3>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            En kaliteli malzemelerle hazırlanan, eşsiz lezzete sahip premium burgerler.
-                            Dr. Burger ile gerçek burger deneyimini keşfedin.
+                            {siteContent?.footerDescription || "En kaliteli malzemelerle hazırlanan, eşsiz lezzete sahip premium burgerler. Dr. Burger ile gerçek burger deneyimini keşfedin."}
                         </p>
                         <div className="flex space-x-4 pt-2">
                             <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
@@ -67,15 +69,17 @@ const Footer = () => {
                         <ul className="space-y-4">
                             <li className="flex items-start space-x-3 text-gray-400 text-sm">
                                 <MapPin size={18} className="text-primary shrink-0 mt-0.5" />
-                                <span>Yaşamkent, 3250. Cd. no:11 Ankabatı<br />Çankaya, Ankara</span>
+                                <span className="whitespace-pre-line">
+                                    {siteContent?.contactAddress || "Yaşamkent, 3250. Cd. no:11 Ankabatı\nÇankaya, Ankara"}
+                                </span>
                             </li>
                             <li className="flex items-center space-x-3 text-gray-400 text-sm">
                                 <Phone size={18} className="text-primary shrink-0" />
-                                <span>+90 501 166 66 06</span>
+                                <span>{siteContent?.contactPhone || "+90 501 166 66 06"}</span>
                             </li>
                             <li className="flex items-center space-x-3 text-gray-400 text-sm">
                                 <Mail size={18} className="text-primary shrink-0" />
-                                <span>info@drburger.com.tr</span>
+                                <span>{siteContent?.contactEmail || "info@drburger.com.tr"}</span>
                             </li>
                         </ul>
                     </div>
@@ -85,8 +89,9 @@ const Footer = () => {
                         <h4 className="text-white font-bold mb-6">Çalışma Saatleri</h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li className="flex justify-between">
-                                <span>Her Gün</span>
-                                <span className="text-white">10:30 - 00:30</span>
+                                <span className="whitespace-pre-line w-full">
+                                    {siteContent?.workingHours || "Her Gün 10:30 - 00:30"}
+                                </span>
                             </li>
                         </ul>
                     </div>

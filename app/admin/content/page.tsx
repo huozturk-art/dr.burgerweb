@@ -14,11 +14,26 @@ export default function ContentPage() {
         heroSubtitle: "",
         aboutTitle: "",
         aboutText: "",
+        footerDescription: "",
+        contactAddress: "",
+        contactPhone: "",
+        contactEmail: "",
+        workingHours: "",
     });
 
     useEffect(() => {
         if (siteContent) {
-            setFormData(siteContent);
+            setFormData({
+                heroTitle: siteContent.heroTitle || "",
+                heroSubtitle: siteContent.heroSubtitle || "",
+                aboutTitle: siteContent.aboutTitle || "",
+                aboutText: siteContent.aboutText || "",
+                footerDescription: siteContent.footerDescription || "",
+                contactAddress: siteContent.contactAddress || "",
+                contactPhone: siteContent.contactPhone || "",
+                contactEmail: siteContent.contactEmail || "",
+                workingHours: siteContent.workingHours || "",
+            });
         }
     }, [siteContent]);
 
@@ -101,6 +116,72 @@ export default function ContentPage() {
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
                             />
                             <p className="text-xs text-gray-500 mt-2">Paragraflar arası boşluk bırakabilirsiniz.</p>
+                        </div>
+                    </div>
+
+                    {/* Footer Section */}
+                    <div className="bg-white/5 border border-white/10 p-8 rounded-2xl space-y-6">
+                        <h2 className="text-xl font-bold text-primary border-b border-white/10 pb-4">
+                            Alt Bilgi (Footer) Alanı
+                        </h2>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">
+                                Footer Açıklaması
+                            </label>
+                            <textarea
+                                rows={3}
+                                value={formData.footerDescription || ""}
+                                onChange={(e) => setFormData({ ...formData, footerDescription: e.target.value })}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Adres
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    value={formData.contactAddress || ""}
+                                    onChange={(e) => setFormData({ ...formData, contactAddress: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Çalışma Saatleri
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    value={formData.workingHours || ""}
+                                    onChange={(e) => setFormData({ ...formData, workingHours: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Telefon
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.contactPhone || ""}
+                                    onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    E-posta
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.contactEmail || ""}
+                                    onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
                         </div>
                     </div>
 

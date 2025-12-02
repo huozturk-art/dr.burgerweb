@@ -27,7 +27,13 @@ export interface SiteContent {
     heroTitle: string;
     heroSubtitle: string;
     aboutTitle: string;
+
     aboutText: string;
+    footerDescription?: string;
+    contactAddress?: string;
+    contactPhone?: string;
+    contactEmail?: string;
+    workingHours?: string;
 }
 
 export interface Application {
@@ -114,7 +120,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                     heroTitle: contentData.hero_title,
                     heroSubtitle: contentData.hero_subtitle,
                     aboutTitle: contentData.about_title,
-                    aboutText: contentData.about_text
+                    aboutText: contentData.about_text,
+                    footerDescription: contentData.footer_description,
+                    contactAddress: contentData.contact_address,
+                    contactPhone: contentData.contact_phone,
+                    contactEmail: contentData.contact_email,
+                    workingHours: contentData.working_hours
                 });
             }
 
@@ -183,6 +194,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (content.heroSubtitle) dbContent.hero_subtitle = content.heroSubtitle;
         if (content.aboutTitle) dbContent.about_title = content.aboutTitle;
         if (content.aboutText) dbContent.about_text = content.aboutText;
+        if (content.footerDescription) dbContent.footer_description = content.footerDescription;
+        if (content.contactAddress) dbContent.contact_address = content.contactAddress;
+        if (content.contactPhone) dbContent.contact_phone = content.contactPhone;
+        if (content.contactEmail) dbContent.contact_email = content.contactEmail;
+        if (content.workingHours) dbContent.working_hours = content.workingHours;
 
         const { error } = await supabase.from('site_content').update(dbContent).eq('id', 1);
         if (error) console.error("Error updating content:", error);
