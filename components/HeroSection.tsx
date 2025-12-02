@@ -44,7 +44,7 @@ const HeroSection = () => {
                     transition={{ duration: 0.8, delay: 0.4 }}
                     className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight whitespace-pre-line"
                 >
-                    {siteContent?.heroTitle || "Anne Eli Değmiş Gibi\nGerçek Burger Lezzeti"}
+                    {siteContent?.heroTitle}
                 </motion.h1>
 
                 <motion.p
@@ -53,7 +53,7 @@ const HeroSection = () => {
                     transition={{ duration: 0.8, delay: 0.6 }}
                     className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
                 >
-                    {siteContent?.heroSubtitle || "Dr. Burger’da her şey evinizde hazırlanmış hissi verir, ama profesyonel bir ustalığın dokunuşuyla sunulur. Ne çok yağlı ne de kuru; tam kıvamında, bol malzemeli ve doyurucu… Bizim için her burger, lezzetli bir anı yaratmak demektir. İşte bu yüzden Dr. Burger, “ev yapımı burger sevenlerin” buluşma noktasıdır."}
+                    {siteContent?.heroSubtitle}
                 </motion.p>
 
                 <motion.div

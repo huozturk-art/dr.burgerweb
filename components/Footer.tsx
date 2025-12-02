@@ -17,7 +17,7 @@ const Footer = () => {
                             DR. BURGER
                         </h3>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            {siteContent?.footerDescription || "En kaliteli malzemelerle hazırlanan, eşsiz lezzete sahip premium burgerler. Dr. Burger ile gerçek burger deneyimini keşfedin."}
+                            {siteContent?.footerDescription}
                         </p>
                         <div className="flex space-x-4 pt-2">
                             <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
@@ -72,16 +72,16 @@ const Footer = () => {
                             <li className="flex items-start space-x-3 text-gray-400 text-sm">
                                 <MapPin size={18} className="text-primary shrink-0 mt-0.5" />
                                 <span className="whitespace-pre-line">
-                                    {siteContent?.contactAddress || "Yaşamkent, 3250. Cd. no:11 Ankabatı\nÇankaya, Ankara"}
+                                    {siteContent?.contactAddress}
                                 </span>
                             </li>
                             <li className="flex items-center space-x-3 text-gray-400 text-sm">
                                 <Phone size={18} className="text-primary shrink-0" />
-                                <span>{siteContent?.contactPhone || "+90 501 166 66 06"}</span>
+                                <span>{siteContent?.contactPhone}</span>
                             </li>
                             <li className="flex items-center space-x-3 text-gray-400 text-sm">
                                 <Mail size={18} className="text-primary shrink-0" />
-                                <span>{siteContent?.contactEmail || "info@drburger.com.tr"}</span>
+                                <span>{siteContent?.contactEmail}</span>
                             </li>
                         </ul>
                     </div>
@@ -92,7 +92,7 @@ const Footer = () => {
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li className="flex justify-between">
                                 <span className="whitespace-pre-line w-full">
-                                    {siteContent?.workingHours || "Her Gün 10:30 - 00:30"}
+                                    {siteContent?.workingHours}
                                 </span>
                             </li>
                         </ul>
