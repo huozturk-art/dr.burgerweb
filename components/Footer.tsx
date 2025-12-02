@@ -98,8 +98,8 @@ const Footer = () => {
                     </p>
                     <div className="flex space-x-6 text-sm text-gray-500">
                         <Link href="/admin" className="hover:text-white transition-colors">Yönetici Girişi</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Gizlilik Politikası</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Kullanım Koşulları</Link>
+                        <Link href="/privacy" className="hover:text-white transition-colors">Gizlilik Politikası</Link>
+                        <Link href="/terms" className="hover:text-white transition-colors">Kullanım Koşulları</Link>
                     </div>
                 </div>
             </div>
