@@ -120,15 +120,69 @@ export default function EditProductPage() {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">
-                            Görsel Yolu
+                            Görsel Yükle
                         </label>
-                        <input
-                            type="text"
-                            required
-                            value={formData.image}
-                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                        />
+                        <div className="flex gap-4 items-start">
+                            <div className="flex-1">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+
+                                        const formData = new FormData();
+                                        formData.append("file", file);
+
+                                        try {
+                                            const res = await fetch("/api/upload", {
+                                                method: "POST",
+                                                body: formData,
+                                            });
+                                            const data = await res.json();
+                                            if (data.success) {
+                                                setFormData(prev => ({ ...prev, image: data.url }));
+                                            } else {
+                                                alert("Yükleme başarısız: " + data.message);
+                                            }
+                                        } catch (err) {
+                                            console.error(err);
+                                            alert("Yükleme sırasında bir hata oluştu.");
+                                        }
+                                    }}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-orange-600"
+                                />
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Bilgisayarınızdan bir resim seçin. Otomatik olarak yüklenecektir.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-400 mb-2">
+                                Veya Görsel Yolu (Manuel)
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={formData.image}
+                                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                            />
+                        </div>
+
+                        {formData.image && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-400 mb-2">Önizleme:</p>
+                                <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-white/20">
+                                    <img
+                                        src={formData.image}
+                                        alt="Preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <button

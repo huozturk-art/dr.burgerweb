@@ -328,23 +328,23 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             }
         };
 
-        // Updated keys to v7 to force refresh and fix potential corruption
-        loadData("dr_burger_products_v7", setProducts);
-        loadData("dr_burger_branches_v7", setBranches);
-        loadData("dr_burger_content_v7", setSiteContent);
-        loadData("dr_burger_applications_v7", setApplications);
-        loadData("dr_burger_categories_v7", setCategories);
+        // Updated keys to v8 to force refresh and fix potential corruption
+        loadData("dr_burger_products_v8", setProducts);
+        loadData("dr_burger_branches_v8", setBranches);
+        loadData("dr_burger_content_v8", setSiteContent);
+        loadData("dr_burger_applications_v8", setApplications);
+        loadData("dr_burger_categories_v8", setCategories);
         setIsInitialized(true);
     }, []);
 
     // Save to localStorage
     useEffect(() => {
         if (isInitialized) {
-            localStorage.setItem("dr_burger_products_v7", JSON.stringify(products));
-            localStorage.setItem("dr_burger_branches_v7", JSON.stringify(branches));
-            localStorage.setItem("dr_burger_content_v7", JSON.stringify(siteContent));
-            localStorage.setItem("dr_burger_applications_v7", JSON.stringify(applications));
-            localStorage.setItem("dr_burger_categories_v7", JSON.stringify(categories));
+            localStorage.setItem("dr_burger_products_v8", JSON.stringify(products));
+            localStorage.setItem("dr_burger_branches_v8", JSON.stringify(branches));
+            localStorage.setItem("dr_burger_content_v8", JSON.stringify(siteContent));
+            localStorage.setItem("dr_burger_applications_v8", JSON.stringify(applications));
+            localStorage.setItem("dr_burger_categories_v8", JSON.stringify(categories));
         }
     }, [products, branches, siteContent, applications, categories, isInitialized]);
 
