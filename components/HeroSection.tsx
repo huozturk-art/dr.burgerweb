@@ -28,6 +28,22 @@ const HeroSection = () => {
             {/* Content */}
             <div className="relative z-10 h-full flex flex-col justify-start pt-40 items-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
                 <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    className="mb-8"
+                >
+                    <Image
+                        src="/images/dr-burger-logo-big.png"
+                        alt="Dr. Burger Logo"
+                        width={300}
+                        height={300}
+                        className="object-contain"
+                        priority
+                    />
+                </motion.div>
+
+                <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
