@@ -82,7 +82,7 @@ const HeroSection = () => {
                     initial={{ opacity: 0, x: 100, rotate: 20 }}
                     animate={{ opacity: 1, x: 0, rotate: 0 }}
                     transition={{ duration: 0.8, delay: 0.5 }}
-                    className="absolute bottom-4 right-2 md:bottom-8 md:right-4 z-20 w-24 md:w-48"
+                    className="absolute bottom-4 right-0 md:bottom-8 z-20 w-24 md:w-48"
                 >
                     <Image
                         src="/images/dr-burger-logo-big.png"
