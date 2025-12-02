@@ -105,7 +105,7 @@ export default function AdminDashboard() {
                                             src={product.image}
                                             alt={product.name}
                                             fill
-                                            className="object-cover"
+                                            className="object-contain p-4"
                                         />
                                         <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/10">
                                             {product.category}
