@@ -37,11 +37,7 @@ const Footer = () => {
                                     Menü
                                 </Link>
                             </li>
-                            <li>
-                                <Link href="/campaigns" className="text-gray-400 hover:text-primary transition-colors">
-                                    Kampanyalar
-                                </Link>
-                            </li>
+
                             <li>
                                 <Link href="/about" className="text-gray-400 hover:text-primary transition-colors">
                                     Hakkımızda
@@ -71,11 +67,11 @@ const Footer = () => {
                         <ul className="space-y-4">
                             <li className="flex items-start space-x-3 text-gray-400 text-sm">
                                 <MapPin size={18} className="text-primary shrink-0 mt-0.5" />
-                                <span>Bağdat Caddesi No: 123<br />Kadıköy, İstanbul</span>
+                                <span>Yaşamkent, 3250. Cd. no:11 Ankabatı<br />Çankaya, Ankara</span>
                             </li>
                             <li className="flex items-center space-x-3 text-gray-400 text-sm">
                                 <Phone size={18} className="text-primary shrink-0" />
-                                <span>+90 (216) 123 45 67</span>
+                                <span>+90 501 166 66 06</span>
                             </li>
                             <li className="flex items-center space-x-3 text-gray-400 text-sm">
                                 <Mail size={18} className="text-primary shrink-0" />
@@ -89,16 +85,8 @@ const Footer = () => {
                         <h4 className="text-white font-bold mb-6">Çalışma Saatleri</h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
                             <li className="flex justify-between">
-                                <span>Pazartesi - Cuma</span>
-                                <span className="text-white">11:00 - 23:00</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span>Cumartesi</span>
-                                <span className="text-white">11:00 - 00:00</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span>Pazar</span>
-                                <span className="text-white">12:00 - 23:00</span>
+                                <span>Her Gün</span>
+                                <span className="text-white">10:30 - 00:30</span>
                             </li>
                         </ul>
                     </div>

@@ -32,36 +32,36 @@ const ContactContent = () => {
                         <div className="space-y-8">
                             {branches && branches.length > 0 ? (
                                 branches.map((branch) => (
-                                    <div key={branch.id} className="bg-white/5 border border-white/10 p-6 rounded-2xl">
-                                        <h4 className="text-xl font-bold text-primary mb-4">{branch.name}</h4>
-                                        <div className="space-y-4">
-                                            <div className="flex items-start space-x-4">
-                                                <div className="bg-primary/20 p-2 rounded-full text-primary shrink-0">
-                                                    <MapPin size={20} />
+                                    <div key={branch.id} className="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                                        <h4 className="text-xl font-bold text-primary mb-2">{branch.name}</h4>
+                                        <div className="space-y-2">
+                                            <div className="flex items-start space-x-3">
+                                                <div className="bg-primary/20 p-1.5 rounded-full text-primary shrink-0">
+                                                    <MapPin size={16} />
                                                 </div>
-                                                <p className="text-gray-400">{branch.address}</p>
+                                                <p className="text-gray-400 text-sm">{branch.address}</p>
                                             </div>
-                                            <div className="flex items-center space-x-4">
-                                                <div className="bg-primary/20 p-2 rounded-full text-primary shrink-0">
-                                                    <Phone size={20} />
+                                            <div className="flex items-center space-x-3">
+                                                <div className="bg-primary/20 p-1.5 rounded-full text-primary shrink-0">
+                                                    <Phone size={16} />
                                                 </div>
-                                                <p className="text-gray-400">{branch.phone}</p>
+                                                <p className="text-gray-400 text-sm">{branch.phone}</p>
                                             </div>
-                                            <div className="flex items-center space-x-4">
-                                                <div className="bg-primary/20 p-2 rounded-full text-primary shrink-0">
-                                                    <Mail size={20} />
+                                            <div className="flex items-center space-x-3">
+                                                <div className="bg-primary/20 p-1.5 rounded-full text-primary shrink-0">
+                                                    <Mail size={16} />
                                                 </div>
-                                                <p className="text-gray-400">{branch.email}</p>
+                                                <p className="text-gray-400 text-sm">{branch.email}</p>
                                             </div>
                                             {branch.map_url && (
-                                                <div className="flex items-center space-x-4 pt-2">
+                                                <div className="flex items-center space-x-3 pt-1">
                                                     <a
                                                         href={branch.map_url}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full justify-center"
+                                                        className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors w-full justify-center"
                                                     >
-                                                        <MapPin size={16} />
+                                                        <MapPin size={14} />
                                                         Haritada Göster
                                                     </a>
                                                 </div>
@@ -81,7 +81,7 @@ const ContactContent = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="bg-white/5 border border-white/10 p-8 rounded-3xl"
+                        className="bg-white/5 border border-white/10 p-8 rounded-3xl sticky top-32 h-fit"
                     >
                         <h3 className="text-2xl font-bold text-white mb-6">
                             Mesaj Gönder
