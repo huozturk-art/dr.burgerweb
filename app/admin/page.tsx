@@ -1,38 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Edit, Trash2, LogOut, MapPin, FileText } from "lucide-react";
+import { Plus, Edit, Trash2, MapPin, FileText } from "lucide-react";
 import { useData } from "@/context/DataContext";
 
 export default function AdminDashboard() {
-    const router = useRouter();
     const {
         products, deleteProduct,
         branches, deleteBranch,
         applications, deleteApplication,
         categories, addCategory, deleteCategory
     } = useData();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [activeTab, setActiveTab] = useState<"products" | "branches" | "content" | "applications" | "categories">("products");
     const [newCategory, setNewCategory] = useState("");
-
-    // ... (useEffect and handleLogout remain same)
-    useEffect(() => {
-        const auth = localStorage.getItem("adminAuth");
-        if (auth !== "true") {
-            router.push("/admin/login");
-        } else {
-            setIsAuthenticated(true);
-        }
-    }, [router]);
-
-    const handleLogout = () => {
-        localStorage.removeItem("adminAuth");
-        router.push("/admin/login");
-    };
 
     const handleAddCategory = (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,21 +24,11 @@ export default function AdminDashboard() {
         }
     };
 
-    if (!isAuthenticated) return null;
-
     return (
-        <div className="min-h-screen bg-black text-white p-8">
+        <div className="p-8">
             <div className="max-w-7xl mx-auto">
-                {/* ... (Header remains same) */}
                 <div className="flex justify-between items-center mb-12">
                     <h1 className="text-3xl font-bold text-white">Yönetici Paneli</h1>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 text-red-500 hover:text-red-400 transition-colors"
-                    >
-                        <LogOut size={20} />
-                        Çıkış Yap
-                    </button>
                 </div>
 
                 {/* Tabs */}
