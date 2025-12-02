@@ -19,6 +19,9 @@ export default function ContentPage() {
         contactPhone: "",
         contactEmail: "",
         workingHours: "",
+        socialInstagram: "",
+        socialFacebook: "",
+        socialTwitter: "",
     });
 
     useEffect(() => {
@@ -33,6 +36,9 @@ export default function ContentPage() {
                 contactPhone: siteContent.contactPhone || "",
                 contactEmail: siteContent.contactEmail || "",
                 workingHours: siteContent.workingHours || "",
+                socialInstagram: siteContent.socialInstagram || "",
+                socialFacebook: siteContent.socialFacebook || "",
+                socialTwitter: siteContent.socialTwitter || "",
             });
         }
     }, [siteContent]);
@@ -179,6 +185,52 @@ export default function ContentPage() {
                                     type="text"
                                     value={formData.contactEmail || ""}
                                     onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {/* Social Media Section */}
+                    <div className="bg-white/5 border border-white/10 p-8 rounded-2xl space-y-6">
+                        <h2 className="text-xl font-bold text-primary border-b border-white/10 pb-4">
+                            Sosyal Medya Hesapları
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Instagram Linki
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.socialInstagram || ""}
+                                    onChange={(e) => setFormData({ ...formData, socialInstagram: e.target.value })}
+                                    placeholder="https://instagram.com/..."
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Facebook Linki
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.socialFacebook || ""}
+                                    onChange={(e) => setFormData({ ...formData, socialFacebook: e.target.value })}
+                                    placeholder="https://facebook.com/..."
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Twitter (X) Linki
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.socialTwitter || ""}
+                                    onChange={(e) => setFormData({ ...formData, socialTwitter: e.target.value })}
+                                    placeholder="https://twitter.com/..."
                                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>

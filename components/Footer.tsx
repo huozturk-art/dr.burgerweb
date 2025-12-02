@@ -20,15 +20,21 @@ const Footer = () => {
                             {siteContent?.footerDescription}
                         </p>
                         <div className="flex space-x-4 pt-2">
-                            <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
-                                <Instagram size={20} />
-                            </Link>
-                            <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
-                                <Facebook size={20} />
-                            </Link>
-                            <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
-                                <Twitter size={20} />
-                            </Link>
+                            {siteContent?.socialInstagram && (
+                                <Link href={siteContent.socialInstagram} target="_blank" className="text-gray-400 hover:text-primary transition-colors">
+                                    <Instagram size={20} />
+                                </Link>
+                            )}
+                            {siteContent?.socialFacebook && (
+                                <Link href={siteContent.socialFacebook} target="_blank" className="text-gray-400 hover:text-primary transition-colors">
+                                    <Facebook size={20} />
+                                </Link>
+                            )}
+                            {siteContent?.socialTwitter && (
+                                <Link href={siteContent.socialTwitter} target="_blank" className="text-gray-400 hover:text-primary transition-colors">
+                                    <Twitter size={20} />
+                                </Link>
+                            )}
                         </div>
                     </div>
 

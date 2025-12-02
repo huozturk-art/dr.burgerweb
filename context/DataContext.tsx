@@ -34,6 +34,9 @@ export interface SiteContent {
     contactPhone?: string;
     contactEmail?: string;
     workingHours?: string;
+    socialInstagram?: string;
+    socialFacebook?: string;
+    socialTwitter?: string;
 }
 
 export interface Application {
@@ -125,7 +128,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                     contactAddress: contentData.contact_address,
                     contactPhone: contentData.contact_phone,
                     contactEmail: contentData.contact_email,
-                    workingHours: contentData.working_hours
+                    workingHours: contentData.working_hours,
+                    socialInstagram: contentData.social_instagram,
+                    socialFacebook: contentData.social_facebook,
+                    socialTwitter: contentData.social_twitter
                 });
             }
 
@@ -199,6 +205,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (content.contactPhone) dbContent.contact_phone = content.contactPhone;
         if (content.contactEmail) dbContent.contact_email = content.contactEmail;
         if (content.workingHours) dbContent.working_hours = content.workingHours;
+        if (content.socialInstagram) dbContent.social_instagram = content.socialInstagram;
+        if (content.socialFacebook) dbContent.social_facebook = content.socialFacebook;
+        if (content.socialTwitter) dbContent.social_twitter = content.socialTwitter;
 
         const { error } = await supabase.from('site_content').update(dbContent).eq('id', 1);
         if (error) console.error("Error updating content:", error);
