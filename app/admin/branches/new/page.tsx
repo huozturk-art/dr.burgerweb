@@ -14,6 +14,7 @@ export default function NewBranchPage() {
         address: "",
         phone: "",
         email: "",
+        map_url: "",
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -71,19 +72,6 @@ export default function NewBranchPage() {
                                 Telefon
                             </label>
                             <input
-                                type="tel"
-                                required
-                                value={formData.phone}
-                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                placeholder="+90 (216) ..."
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">
-                                E-posta
-                            </label>
-                            <input
                                 type="email"
                                 required
                                 value={formData.email}
@@ -94,6 +82,19 @@ export default function NewBranchPage() {
                         </div>
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">
+                            Harita Linki (Google Maps)
+                        </label>
+                        <input
+                            type="url"
+                            value={formData.map_url}
+                            onChange={(e) => setFormData({ ...formData, map_url: e.target.value })}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                            placeholder="https://maps.google.com/..."
+                        />
+                    </div>
+
                     <button
                         type="submit"
                         className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
@@ -102,7 +103,7 @@ export default function NewBranchPage() {
                         Kaydet
                     </button>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

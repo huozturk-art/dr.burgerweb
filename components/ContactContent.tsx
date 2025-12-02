@@ -53,19 +53,25 @@ const ContactContent = () => {
                                                 </div>
                                                 <p className="text-gray-400">{branch.email}</p>
                                             </div>
+                                            {branch.map_url && (
+                                                <div className="flex items-center space-x-4 pt-2">
+                                                    <a
+                                                        href={branch.map_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full justify-center"
+                                                    >
+                                                        <MapPin size={16} />
+                                                        Haritada Göster
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
                             ) : (
                                 <div className="text-gray-400">Henüz şube eklenmemiş.</div>
                             )}
-                        </div>
-
-                        {/* Map Placeholder */}
-                        <div className="mt-12 h-64 w-full bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden relative">
-                            {/* In a real app, embed Google Maps iframe here */}
-                            <div className="absolute inset-0 bg-gray-800 animate-pulse" />
-                            <span className="relative z-10 text-gray-400 font-medium">Harita Yükleniyor...</span>
                         </div>
                     </motion.div>
 

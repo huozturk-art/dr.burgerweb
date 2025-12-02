@@ -229,6 +229,16 @@ export default function AdminDashboard() {
                                         </p>
                                         <p className="pl-7">{branch.phone}</p>
                                         <p className="pl-7">{branch.email}</p>
+                                        {branch.map_url && (
+                                            <a
+                                                href={branch.map_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="pl-7 text-primary hover:underline text-sm block mt-1"
+                                            >
+                                                Haritada Göster
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             ))}

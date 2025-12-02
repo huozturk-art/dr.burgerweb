@@ -20,6 +20,7 @@ export interface Branch {
     address: string;
     phone: string;
     email: string;
+    map_url?: string;
 }
 
 export interface SiteContent {
