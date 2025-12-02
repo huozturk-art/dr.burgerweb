@@ -27,21 +27,6 @@ const HeroSection = () => {
 
             {/* Content */}
             <div className="relative z-10 h-full flex flex-col justify-start pt-40 items-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8 }}
-                    className="mb-8"
-                >
-                    <Image
-                        src="/images/dr-burger-logo-big.png"
-                        alt="Dr. Burger Logo"
-                        width={300}
-                        height={300}
-                        className="object-contain"
-                        priority
-                    />
-                </motion.div>
 
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -90,6 +75,23 @@ const HeroSection = () => {
                     >
                         Bize Ulaşın
                     </Link>
+                </motion.div>
+
+                {/* Floating Logo in Bottom Right */}
+                <motion.div
+                    initial={{ opacity: 0, x: 100, rotate: 20 }}
+                    animate={{ opacity: 1, x: 0, rotate: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="absolute bottom-4 right-4 md:bottom-12 md:right-12 z-20 w-32 md:w-64"
+                >
+                    <Image
+                        src="/images/dr-burger-logo-big.png"
+                        alt="Dr. Burger Logo"
+                        width={300}
+                        height={300}
+                        className="object-contain drop-shadow-2xl"
+                        priority
+                    />
                 </motion.div>
             </div>
         </section>
