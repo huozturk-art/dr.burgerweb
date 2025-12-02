@@ -70,13 +70,13 @@ interface DataContextType {
 // --- Initial Data ---
 
 const INITIAL_PRODUCTS: Product[] = [
-    // A) Klasik Kırmızı Et Burgerler
+    // A) Klasik Burgerler
     {
         id: "1",
         name: "Dr. Burger",
         description: "Burger Ekmeği, 110gr Burger Köftesi, Dr. Sos (30gr), Karamelize Soğan (20gr), Turşu (10gr), Iceberg (20gr).",
         price: 240,
-        image: "/images/products/DSC04682.JPG.png",
+        image: "/images/products/Dr Burger.png",
         category: "Klasik Burgerler",
     },
     {
@@ -84,15 +84,15 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Klasik Burger",
         description: "Burger Ekmeği, 110gr Burger Köftesi, Çıtır Soğan (10gr), Iceberg (20gr), Ketçap (15gr), Mayonez (15gr), Domates.",
         price: 220,
-        image: "/images/products/DSC04682.JPG.png",
+        image: "/images/products/Classic burger.png",
         category: "Klasik Burgerler",
     },
     {
         id: "3",
-        name: "Dr. Cheese Burger",
+        name: "Cheese Burger",
         description: "Burger Ekmeği, 110gr Burger Köftesi, Dr. Sos (30gr), 2 Dilim Cheddar Peyniri (30gr), Turşu (10gr).",
         price: 260,
-        image: "/images/products/DSC04715.png",
+        image: "/images/products/Cheese burger.png",
         category: "Klasik Burgerler",
     },
     {
@@ -100,7 +100,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Mushroom Burger",
         description: "Burger Ekmeği, 110gr Burger Köftesi, Kremalı Mantar (50gr), Mayonez (30gr), Iceberg Marul (20gr), Turşu (10gr).",
         price: 270,
-        image: "/images/products/DSC04700.png",
+        image: "/images/products/Mushroom burger.png",
         category: "Klasik Burgerler",
     },
 
@@ -110,7 +110,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Big Burger",
         description: "Burger Ekmeği, 110gr Köfte, Dr. Sos, Pastırma (20gr), Karamelize Soğan, Kibrit Patates, 4 Dilim Cheddar (60gr), Turşu.",
         price: 340,
-        image: "/images/products/DSC04693.png",
+        image: "/images/products/Big burger.png",
         category: "Özel Seriler",
     },
     {
@@ -118,7 +118,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Otto Burger",
         description: "Burger Ekmeği, 110gr Köfte, Dr. Sos, Pastırma (20gr), Soğan Turşusu (20gr), Kibrit Patates (20gr).",
         price: 330,
-        image: "/images/products/DSC04693.png",
+        image: "/images/products/Otto burger.png",
         category: "Özel Seriler",
     },
     {
@@ -126,15 +126,15 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Tiftik Burger",
         description: "Burger Ekmeği, 110gr Dana Tiftik Et, Dr. Sos (30gr), BBQ Sos (20gr), Soğan Turşusu (20gr).",
         price: 350,
-        image: "/images/products/DSC04706.png",
+        image: "/images/products/Tiftik burger.png",
         category: "Özel Seriler",
     },
     {
         id: "8",
-        name: "Smoke Burger",
+        name: "Smoke BBQ Burger",
         description: "Burger Ekmeği, 110gr Köfte, 60gr Dana Füme Et, 2 Dilim Cheddar (30gr), Barbekü Sos (30gr), Çıtır Soğan.",
         price: 340,
-        image: "/images/products/DSC04703.png",
+        image: "/images/products/SmokeBBQ burger.png",
         category: "Özel Seriler",
     },
 
@@ -144,7 +144,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Chicken Burger",
         description: "Burger Ekmeği, 40gr Pane, 80gr Tavuk Göğsü, Mayonez (30gr), Sweet Chili Sos (20gr), Turşu, Iceberg.",
         price: 200,
-        image: "/images/products/DSC04682.JPG.png",
+        image: "/images/products/Chicken burger.png",
         category: "Tavuk Burgerler",
     },
     {
@@ -152,7 +152,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Cheese Chicken Burger",
         description: "Chicken Burger içeriğine ek olarak 2 Dilim Cheddar Peyniri (30gr).",
         price: 220,
-        image: "/images/products/DSC04715.png",
+        image: "/images/products/Cheese Chicken Burger.png",
         category: "Tavuk Burgerler",
     },
 
@@ -162,7 +162,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Fire Burger",
         description: "110gr Köfte, Sriracha Sos (30gr), Acılı Mayonez Sos (20gr), Soğan Turşusu (20gr), Jalapeno (10gr).",
         price: 270,
-        image: "/images/products/DSC04703.png",
+        image: "/images/products/Fire burger.png",
         category: "Fire (Acı) Serisi",
     },
     {
@@ -170,25 +170,51 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Chicken Fire Burger",
         description: "80gr Tavuk Göğsü, 40gr Pane, Sriracha Sos, Acılı Mayonez, Soğan Turşusu, Jalapeno Biber, Iceberg.",
         price: 230,
-        image: "/images/products/DSC04703.png",
+        image: "/images/products/Chicken Fire Burger.png",
         category: "Fire (Acı) Serisi",
     },
 
-    // Yan Ürünler (Korundu)
+    // E) Hot Doglar
+    {
+        id: "20",
+        name: "Classic Hot Dog",
+        description: "Özel sosis, hardal, ketçap, turşu.",
+        price: 180,
+        image: "/images/products/Classic hatdog.png",
+        category: "Hot Doglar",
+    },
+    {
+        id: "21",
+        name: "Cheese Hot Dog",
+        description: "Özel sosis, cheddar sos, karamelize soğan.",
+        price: 200,
+        image: "/images/products/Cheese hatdog.png",
+        category: "Hot Doglar",
+    },
+    {
+        id: "22",
+        name: "Fire Hot Dog",
+        description: "Özel sosis, acı sos, jalapeno, çıtır soğan.",
+        price: 210,
+        image: "/images/products/Fire hatdog.png",
+        category: "Hot Doglar",
+    },
+
+    // F) Yan Ürünler
     {
         id: "13",
-        name: "Çıtır Patates",
-        description: "Özel baharat çeşnisi ile hazırlanmış altın sarısı patates kızartması.",
-        price: 90,
-        image: "/images/products/DSC04754.png",
+        name: "Chicken Fingers",
+        description: "Çıtır tavuk parçaları, özel sos ile.",
+        price: 120,
+        image: "/images/products/Chicken fingers.png",
         category: "Yan Ürünler",
     },
     {
         id: "14",
-        name: "Soğan Halkası",
-        description: "8 adet çıtır soğan halkası, özel dip sos ile.",
-        price: 110,
-        image: "/images/products/DSC04785.png",
+        name: "Karışık Sepet",
+        description: "Patates kızartması, soğan halkası, chicken fingers, mozzarella sticks.",
+        price: 180,
+        image: "/images/products/Karışık sepet.png",
         category: "Yan Ürünler",
     },
     {
@@ -196,17 +222,25 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Mozzarella Sticks",
         description: "Çıtır kaplamalı mozzarella peyniri.",
         price: 130,
-        image: "/images/products/DSC04805.JPG.png",
+        image: "/images/products/Mozerella stick.png",
+        category: "Yan Ürünler",
+    },
+    {
+        id: "23",
+        name: "Soğan Halkası",
+        description: "8 adet çıtır soğan halkası, özel dip sos ile.",
+        price: 110,
+        image: "/images/products/Soganhalkasi.png",
         category: "Yan Ürünler",
     },
 
-    // E) İçecekler
+    // G) İçecekler
     {
         id: "16",
         name: "Coca-Cola",
         description: "330ml Kutu",
         price: 60,
-        image: "/images/products/coca-cola.png", // Placeholder, user can update
+        image: "/images/products/coca-cola.png",
         category: "İçecekler",
     },
     {
@@ -214,7 +248,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Fanta",
         description: "330ml Kutu",
         price: 60,
-        image: "/images/products/fanta.png", // Placeholder
+        image: "/images/products/fanta.png",
         category: "İçecekler",
     },
     {
@@ -222,7 +256,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Ayran",
         description: "300ml",
         price: 40,
-        image: "/images/products/ayran.png", // Placeholder
+        image: "/images/products/ayran.png",
         category: "İçecekler",
     },
     {
@@ -230,7 +264,7 @@ const INITIAL_PRODUCTS: Product[] = [
         name: "Su",
         description: "500ml Pet Şişe",
         price: 20,
-        image: "/images/products/su.png", // Placeholder
+        image: "/images/products/su.png",
         category: "İçecekler",
     },
 ];
@@ -240,6 +274,7 @@ export const INITIAL_CATEGORIES = [
     "Özel Seriler",
     "Tavuk Burgerler",
     "Fire (Acı) Serisi",
+    "Hot Doglar",
     "Yan Ürünler",
     "İçecekler"
 ];
