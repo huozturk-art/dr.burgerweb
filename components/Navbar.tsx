@@ -12,7 +12,7 @@ const Navbar = () => {
     const navLinks = [
         { name: "Ana Sayfa", href: "/" },
         { name: "Menü", href: "/menu" },
-        { name: "Kampanyalar", href: "/campaigns" },
+        // { name: "Kampanyalar", href: "/campaigns" },
         { name: "Franchise", href: "/franchise" },
         { name: "Kariyer", href: "/career" },
         { name: "Hakkımızda", href: "/about" },
