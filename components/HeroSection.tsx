@@ -23,15 +23,17 @@ const HeroSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
             </div>
 
+
+
             {/* Content */}
-            <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+            <div className="relative z-10 h-full flex flex-col justify-start pt-40 items-center text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                 >
                     <span className="inline-block py-1 px-3 rounded-full bg-primary/20 text-primary border border-primary/30 text-sm font-semibold tracking-wider mb-6">
-                        %100 DOĞAL & EV YAPIMI
+                        %100 DOĞAL, KATKISIZ LEZZET
                     </span>
                 </motion.div>
 
@@ -39,7 +41,7 @@ const HeroSection = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
-                    className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight whitespace-pre-line"
+                    className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight whitespace-pre-line"
                 >
                     {siteContent?.heroTitle || "Anne Eli Değmiş Gibi\nGerçek Burger Lezzeti"}
                 </motion.h1>
@@ -50,7 +52,7 @@ const HeroSection = () => {
                     transition={{ duration: 0.8, delay: 0.6 }}
                     className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
                 >
-                    {siteContent?.heroSubtitle || "Dondurulmuş ürün yok, katkı maddesi yok. Günlük taze ekmek, %100 dana eti ve şefimizin özel soslarıyla hazırlanan sağlıklı burger deneyimi."}
+                    {siteContent?.heroSubtitle || "Dr. Burger’da her şey evinizde hazırlanmış hissi verir, ama profesyonel bir ustalığın dokunuşuyla sunulur. Ne çok yağlı ne de kuru; tam kıvamında, bol malzemeli ve doyurucu… Bizim için her burger, lezzetli bir anı yaratmak demektir. İşte bu yüzden Dr. Burger, “ev yapımı burger sevenlerin” buluşma noktasıdır."}
                 </motion.p>
 
                 <motion.div

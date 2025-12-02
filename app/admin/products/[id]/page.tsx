@@ -9,7 +9,7 @@ import Link from "next/link";
 export default function EditProductPage() {
     const router = useRouter();
     const params = useParams();
-    const { products, updateProduct } = useData();
+    const { products, updateProduct, categories } = useData();
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -109,12 +109,11 @@ export default function EditProductPage() {
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                 className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
                             >
-                                <option value="Klasik Burgerler">Klasik Burgerler</option>
-                                <option value="Özel Seriler">Özel Seriler</option>
-                                <option value="Tavuk Burgerler">Tavuk Burgerler</option>
-                                <option value="Fire (Acı) Serisi">Fire (Acı) Serisi</option>
-                                <option value="Yan Ürünler">Yan Ürünler</option>
-                                <option value="İçecek">İçecek</option>
+                                {categories.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>

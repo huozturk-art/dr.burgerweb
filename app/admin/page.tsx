@@ -9,10 +9,17 @@ import { useData } from "@/context/DataContext";
 
 export default function AdminDashboard() {
     const router = useRouter();
-    const { products, deleteProduct, branches, deleteBranch, applications, deleteApplication } = useData();
+    const {
+        products, deleteProduct,
+        branches, deleteBranch,
+        applications, deleteApplication,
+        categories, addCategory, deleteCategory
+    } = useData();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [activeTab, setActiveTab] = useState<"products" | "branches" | "content" | "applications">("products");
+    const [activeTab, setActiveTab] = useState<"products" | "branches" | "content" | "applications" | "categories">("products");
+    const [newCategory, setNewCategory] = useState("");
 
+    // ... (useEffect and handleLogout remain same)
     useEffect(() => {
         const auth = localStorage.getItem("adminAuth");
         if (auth !== "true") {
@@ -27,11 +34,20 @@ export default function AdminDashboard() {
         router.push("/admin/login");
     };
 
+    const handleAddCategory = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newCategory.trim()) {
+            addCategory(newCategory.trim());
+            setNewCategory("");
+        }
+    };
+
     if (!isAuthenticated) return null;
 
     return (
         <div className="min-h-screen bg-black text-white p-8">
             <div className="max-w-7xl mx-auto">
+                {/* ... (Header remains same) */}
                 <div className="flex justify-between items-center mb-12">
                     <h1 className="text-3xl font-bold text-white">Yönetici Paneli</h1>
                     <button
@@ -44,10 +60,10 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-4 mb-8 border-b border-white/10 pb-1">
+                <div className="flex gap-4 mb-8 border-b border-white/10 pb-1 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab("products")}
-                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors ${activeTab === "products"
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "products"
                             ? "bg-primary text-white"
                             : "bg-white/5 text-gray-400 hover:bg-white/10"
                             }`}
@@ -55,8 +71,17 @@ export default function AdminDashboard() {
                         Ürünler
                     </button>
                     <button
+                        onClick={() => setActiveTab("categories")}
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "categories"
+                            ? "bg-primary text-white"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10"
+                            }`}
+                    >
+                        Kategoriler
+                    </button>
+                    <button
                         onClick={() => setActiveTab("branches")}
-                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors ${activeTab === "branches"
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "branches"
                             ? "bg-primary text-white"
                             : "bg-white/5 text-gray-400 hover:bg-white/10"
                             }`}
@@ -65,7 +90,7 @@ export default function AdminDashboard() {
                     </button>
                     <button
                         onClick={() => setActiveTab("content")}
-                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors ${activeTab === "content"
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "content"
                             ? "bg-primary text-white"
                             : "bg-white/5 text-gray-400 hover:bg-white/10"
                             }`}
@@ -74,7 +99,7 @@ export default function AdminDashboard() {
                     </button>
                     <button
                         onClick={() => setActiveTab("applications")}
-                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors ${activeTab === "applications"
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "applications"
                             ? "bg-primary text-white"
                             : "bg-white/5 text-gray-400 hover:bg-white/10"
                             }`}
@@ -85,6 +110,7 @@ export default function AdminDashboard() {
 
                 {/* Products Tab */}
                 {activeTab === "products" && (
+                    // ... (Products content remains same)
                     <div>
                         <div className="flex justify-end mb-8">
                             <Link
@@ -142,6 +168,53 @@ export default function AdminDashboard() {
                                             </button>
                                         </div>
                                     </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Categories Tab */}
+                {activeTab === "categories" && (
+                    <div className="max-w-2xl mx-auto">
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8">
+                            <h3 className="text-xl font-bold text-white mb-6">Yeni Kategori Ekle</h3>
+                            <form onSubmit={handleAddCategory} className="flex gap-4">
+                                <input
+                                    type="text"
+                                    value={newCategory}
+                                    onChange={(e) => setNewCategory(e.target.value)}
+                                    placeholder="Kategori Adı (örn: Tatlılar)"
+                                    className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={!newCategory.trim()}
+                                    className="bg-primary hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2"
+                                >
+                                    <Plus size={20} />
+                                    Ekle
+                                </button>
+                            </form>
+                        </div>
+
+                        <div className="space-y-4">
+                            {categories.map((category) => (
+                                <div
+                                    key={category}
+                                    className="bg-white/5 border border-white/10 p-4 rounded-xl flex justify-between items-center group hover:border-white/20 transition-colors"
+                                >
+                                    <span className="text-lg font-medium text-white">{category}</span>
+                                    <button
+                                        onClick={() => {
+                                            if (confirm(`"${category}" kategorisini silmek istediğinize emin misiniz? Bu kategoriye ait ürünler silinmez ancak kategorisiz kalabilirler.`)) {
+                                                deleteCategory(category);
+                                            }
+                                        }}
+                                        className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
                                 </div>
                             ))}
                         </div>

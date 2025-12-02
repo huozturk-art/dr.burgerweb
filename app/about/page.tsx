@@ -6,6 +6,13 @@ export const metadata: Metadata = {
     description: "Dr. Burger'in hikayesi, vizyonu ve lezzet sırları. %100 dana eti ve günlük taze malzemelerle hazırlanan burgerlerimizin arkasındaki tutkuyu keşfedin.",
 };
 
+import GallerySection from "@/components/GallerySection";
+
 export default function AboutPage() {
-    return <AboutContent />;
+    return (
+        <>
+            <AboutContent />
+            <GallerySection />
+        </>
+    );
 }

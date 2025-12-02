@@ -6,6 +6,13 @@ export const metadata: Metadata = {
     description: "Bize ulaşın. Adres, telefon ve iletişim formu. Dr. Burger şubelerini haritada görüntüleyin.",
 };
 
+import GallerySection from "@/components/GallerySection";
+
 export default function ContactPage() {
-    return <ContactContent />;
+    return (
+        <>
+            <ContactContent />
+            <GallerySection />
+        </>
+    );
 }

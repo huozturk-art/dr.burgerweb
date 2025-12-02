@@ -60,6 +60,11 @@ interface DataContextType {
     applications: Application[];
     addApplication: (application: Omit<Application, "id" | "date">) => void;
     deleteApplication: (id: string) => void;
+
+    // Categories
+    categories: string[];
+    addCategory: (category: string) => void;
+    deleteCategory: (category: string) => void;
 }
 
 // --- Initial Data ---
@@ -194,6 +199,49 @@ const INITIAL_PRODUCTS: Product[] = [
         image: "/images/products/DSC04805.JPG.png",
         category: "Yan Ürünler",
     },
+
+    // E) İçecekler
+    {
+        id: "16",
+        name: "Coca-Cola",
+        description: "330ml Kutu",
+        price: 60,
+        image: "/images/products/coca-cola.png", // Placeholder, user can update
+        category: "İçecekler",
+    },
+    {
+        id: "17",
+        name: "Fanta",
+        description: "330ml Kutu",
+        price: 60,
+        image: "/images/products/fanta.png", // Placeholder
+        category: "İçecekler",
+    },
+    {
+        id: "18",
+        name: "Ayran",
+        description: "300ml",
+        price: 40,
+        image: "/images/products/ayran.png", // Placeholder
+        category: "İçecekler",
+    },
+    {
+        id: "19",
+        name: "Su",
+        description: "500ml Pet Şişe",
+        price: 20,
+        image: "/images/products/su.png", // Placeholder
+        category: "İçecekler",
+    },
+];
+
+export const INITIAL_CATEGORIES = [
+    "Klasik Burgerler",
+    "Özel Seriler",
+    "Tavuk Burgerler",
+    "Fire (Acı) Serisi",
+    "Yan Ürünler",
+    "İçecekler"
 ];
 
 const INITIAL_BRANCHES: Branch[] = [
@@ -215,7 +263,7 @@ const INITIAL_BRANCHES: Branch[] = [
 
 const INITIAL_CONTENT: SiteContent = {
     heroTitle: "Anne Eli Değmiş Gibi\nGerçek Burger Lezzeti",
-    heroSubtitle: "Dondurulmuş ürün yok, katkı maddesi yok. Günlük taze ekmek, %100 dana eti ve şefimizin özel soslarıyla hazırlanan sağlıklı burger deneyimi.",
+    heroSubtitle: "Dr. Burger’da her şey evinizde hazırlanmış hissi verir, ama profesyonel bir ustalığın dokunuşuyla sunulur. Ne çok yağlı ne de kuru; tam kıvamında, bol malzemeli ve doyurucu… Bizim için her burger, lezzetli bir anı yaratmak demektir. İşte bu yüzden Dr. Burger, “ev yapımı burger sevenlerin” buluşma noktasıdır.",
     aboutTitle: "Neden Dr. Burger?",
     aboutText: "Dr. Burger’da her şey evinizde hazırlanmış hissi verir, ama profesyonel bir ustalığın dokunuşuyla sunulur. Ne çok yağlı ne de kuru; tam kıvamında, bol malzemeli ve doyurucu… Bizim için her burger, lezzetli bir anı yaratmak demektir. İşte bu yüzden Dr. Burger, “ev yapımı burger sevenlerin” buluşma noktasıdır."
 };
@@ -229,6 +277,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const [branches, setBranches] = useState<Branch[]>(INITIAL_BRANCHES);
     const [siteContent, setSiteContent] = useState<SiteContent>(INITIAL_CONTENT);
     const [applications, setApplications] = useState<Application[]>([]);
+    const [categories, setCategories] = useState<string[]>(INITIAL_CATEGORIES);
     const [isInitialized, setIsInitialized] = useState(false);
 
     // Load from localStorage
@@ -244,23 +293,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             }
         };
 
-        // Updated keys to v4 to force refresh and fix potential corruption
-        loadData("dr_burger_products_v4", setProducts);
-        loadData("dr_burger_branches_v4", setBranches);
-        loadData("dr_burger_content_v4", setSiteContent);
-        loadData("dr_burger_applications_v4", setApplications);
+        // Updated keys to v7 to force refresh and fix potential corruption
+        loadData("dr_burger_products_v7", setProducts);
+        loadData("dr_burger_branches_v7", setBranches);
+        loadData("dr_burger_content_v7", setSiteContent);
+        loadData("dr_burger_applications_v7", setApplications);
+        loadData("dr_burger_categories_v7", setCategories);
         setIsInitialized(true);
     }, []);
 
     // Save to localStorage
     useEffect(() => {
         if (isInitialized) {
-            localStorage.setItem("dr_burger_products_v4", JSON.stringify(products));
-            localStorage.setItem("dr_burger_branches_v4", JSON.stringify(branches));
-            localStorage.setItem("dr_burger_content_v4", JSON.stringify(siteContent));
-            localStorage.setItem("dr_burger_applications_v4", JSON.stringify(applications));
+            localStorage.setItem("dr_burger_products_v7", JSON.stringify(products));
+            localStorage.setItem("dr_burger_branches_v7", JSON.stringify(branches));
+            localStorage.setItem("dr_burger_content_v7", JSON.stringify(siteContent));
+            localStorage.setItem("dr_burger_applications_v7", JSON.stringify(applications));
+            localStorage.setItem("dr_burger_categories_v7", JSON.stringify(categories));
         }
-    }, [products, branches, siteContent, applications, isInitialized]);
+    }, [products, branches, siteContent, applications, categories, isInitialized]);
 
     // Product Actions
     const addProduct = (newProduct: Omit<Product, "id">) => {
@@ -313,6 +364,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setApplications((prev) => prev.filter((app) => app.id !== id));
     };
 
+    // Category Actions
+    const addCategory = (category: string) => {
+        if (!categories.includes(category)) {
+            setCategories(prev => [...prev, category]);
+        }
+    };
+
+    const deleteCategory = (category: string) => {
+        setCategories(prev => prev.filter(c => c !== category));
+    };
+
     return (
         <DataContext.Provider
             value={{
@@ -330,6 +392,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                 applications,
                 addApplication,
                 deleteApplication,
+                categories,
+                addCategory,
+                deleteCategory,
             }}
         >
             {children}
