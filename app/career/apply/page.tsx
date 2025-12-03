@@ -27,6 +27,7 @@ function ApplyForm() {
         addApplication({
             ...formData,
             position,
+            type: 'job'
         });
         alert("Başvurunuz başarıyla alındı! En kısa sürede sizinle iletişime geçeceğiz.");
         router.push("/career");
