@@ -1,0 +1,17 @@
+name: Supabase Direct Ping
+
+on:
+  schedule:
+    - cron: '0 9 */2 * *' # 2 günde bir çalışır
+  workflow_dispatch:
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase Tablosundan Veri Çek
+        # "products" tablosundan veri çekiyoruz
+        run: |
+          curl -X GET '${{ secrets.SUPABASE_URL }}/rest/v1/products?select=*&limit=1' \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
