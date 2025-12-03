@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SectionTitle from "@/components/SectionTitle";
@@ -86,56 +87,7 @@ const ContactContent = () => {
                         <h3 className="text-2xl font-bold text-white mb-6">
                             Mesaj Gönder
                         </h3>
-                        <form className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Ad Soyad</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                        placeholder="Adınız"
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">E-posta</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                        placeholder="ornek@email.com"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="subject" className="block text-sm font-medium text-gray-400 mb-2">Konu</label>
-                                <input
-                                    type="text"
-                                    id="subject"
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                    placeholder="Mesajınızın konusu"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-2">Mesajınız</label>
-                                <textarea
-                                    id="message"
-                                    rows={4}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
-                                    placeholder="Bize iletmek istediklerinizi yazın..."
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
-                            >
-                                <Send size={18} />
-                                Gönder
-                            </button>
-                        </form>
+                        <ContactForm />
                     </motion.div>
                 </div>
             </div>
@@ -144,5 +96,97 @@ const ContactContent = () => {
         </main>
     );
 };
+
+function ContactForm() {
+    const { addMessage } = useData();
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            await addMessage(formData);
+            alert("Mesajınız başarıyla gönderildi!");
+            setFormData({ name: "", email: "", subject: "", message: "" });
+        } catch (error) {
+            console.error("Error sending message:", error);
+            alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Ad Soyad</label>
+                    <input
+                        type="text"
+                        id="name"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        placeholder="Adınız"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">E-posta</label>
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        placeholder="ornek@email.com"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-400 mb-2">Konu</label>
+                <input
+                    type="text"
+                    id="subject"
+                    required
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                    placeholder="Mesajınızın konusu"
+                />
+            </div>
+
+            <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-2">Mesajınız</label>
+                <textarea
+                    id="message"
+                    rows={4}
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                    placeholder="Bize iletmek istediklerinizi yazın..."
+                />
+            </div>
+
+            <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-primary hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+                <Send size={18} />
+                {isSubmitting ? "Gönderiliyor..." : "Gönder"}
+            </button>
+        </form>
+    );
+}
 
 export default ContactContent;

@@ -7,27 +7,18 @@ import { motion } from "framer-motion";
 import { Briefcase, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 
+import { useData } from "@/context/DataContext";
+
 export default function CareerPage() {
-    const positions = [
-        {
-            title: "Mutfak Şefi",
-            location: "Kadıköy, İstanbul",
-            type: "Tam Zamanlı",
-            description: "Burger hazırlığı ve mutfak operasyonunda deneyimli, hijyen kurallarına hakim şefler arıyoruz."
-        },
-        {
-            title: "Servis Personeli",
-            location: "Beşiktaş, İstanbul",
-            type: "Yarı Zamanlı / Tam Zamanlı",
-            description: "Enerjik, güler yüzlü ve misafir memnuniyetini ön planda tutan servis ekip arkadaşları arıyoruz."
-        },
-        {
-            title: "Kurye",
-            location: "Tüm Şubeler",
-            type: "Tam Zamanlı",
-            description: "A2 ehliyetli, güvenli sürüş kurallarına uyan ve bölgeye hakim motor kuryeler arıyoruz."
-        }
-    ];
+    const { jobPostings } = useData();
+
+    // Filter only active job postings
+    const positions = jobPostings ? jobPostings.filter(job => job.isActive).map(job => ({
+        title: job.title,
+        location: job.location,
+        type: job.type,
+        description: job.description
+    })) : [];
 
     return (
         <main className="min-h-screen bg-black text-white">

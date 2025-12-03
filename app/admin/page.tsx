@@ -11,10 +11,20 @@ export default function AdminDashboard() {
         products, deleteProduct,
         branches, deleteBranch,
         applications, deleteApplication,
-        categories, addCategory, deleteCategory
+        categories, addCategory, deleteCategory,
+        jobPostings, addJobPosting, deleteJobPosting,
+        messages, deleteMessage
     } = useData();
-    const [activeTab, setActiveTab] = useState<"products" | "branches" | "content" | "applications" | "categories">("products");
+    const [activeTab, setActiveTab] = useState<"products" | "branches" | "content" | "applications" | "categories" | "jobs" | "messages">("products");
     const [newCategory, setNewCategory] = useState("");
+    const [newJob, setNewJob] = useState({ title: "", location: "", type: "", description: "", isActive: true });
+
+    const handleAddJob = (e: React.FormEvent) => {
+        e.preventDefault();
+        addJobPosting(newJob);
+        setNewJob({ title: "", location: "", type: "", description: "", isActive: true });
+        alert("İş ilanı eklendi.");
+    };
 
     const handleAddCategory = (e: React.FormEvent) => {
         e.preventDefault();
@@ -68,6 +78,24 @@ export default function AdminDashboard() {
                             }`}
                     >
                         İçerik Yönetimi
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("jobs")}
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "jobs"
+                            ? "bg-primary text-white"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10"
+                            }`}
+                    >
+                        İş İlanları
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("messages")}
+                        className={`px-6 py-3 rounded-t-xl font-bold transition-colors whitespace-nowrap ${activeTab === "messages"
+                            ? "bg-primary text-white"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10"
+                            }`}
+                    >
+                        Mesajlar
                     </button>
                     <button
                         onClick={() => setActiveTab("applications")}
@@ -251,6 +279,138 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
+
+
+                {/* Jobs Tab */}
+                {activeTab === "jobs" && (
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8">
+                            <h3 className="text-xl font-bold text-white mb-6">Yeni İş İlanı Ekle</h3>
+                            <form onSubmit={handleAddJob} className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Pozisyon Adı (örn: Mutfak Şefi)"
+                                        required
+                                        value={newJob.title}
+                                        onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
+                                        className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Konum (örn: Kadıköy)"
+                                        required
+                                        value={newJob.location}
+                                        onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
+                                        className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Çalışma Tipi (örn: Tam Zamanlı)"
+                                        required
+                                        value={newJob.type}
+                                        onChange={(e) => setNewJob({ ...newJob, type: e.target.value })}
+                                        className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                    />
+                                    <select
+                                        value={newJob.isActive ? "active" : "inactive"}
+                                        onChange={(e) => setNewJob({ ...newJob, isActive: e.target.value === "active" })}
+                                        className="bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                    >
+                                        <option value="active">Aktif</option>
+                                        <option value="inactive">Pasif</option>
+                                    </select>
+                                </div>
+                                <textarea
+                                    placeholder="İş Tanımı"
+                                    required
+                                    rows={3}
+                                    value={newJob.description}
+                                    onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary resize-none"
+                                />
+                                <button
+                                    type="submit"
+                                    className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-all duration-300"
+                                >
+                                    İlanı Yayınla
+                                </button>
+                            </form>
+                        </div>
+
+                        <div className="space-y-4">
+                            {jobPostings.map((job) => (
+                                <div key={job.id} className="bg-white/5 border border-white/10 p-6 rounded-2xl flex justify-between items-start">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <h3 className="text-xl font-bold text-white">{job.title}</h3>
+                                            <span className={`text-xs px-2 py-1 rounded-full ${job.isActive ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"}`}>
+                                                {job.isActive ? "Aktif" : "Pasif"}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-400 text-sm mb-1">{job.location} • {job.type}</p>
+                                        <p className="text-gray-500 text-sm">{job.description}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            if (confirm("Bu ilanı silmek istediğinize emin misiniz?")) deleteJobPosting(job.id);
+                                        }}
+                                        className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Messages Tab */}
+                {activeTab === "messages" && (
+                    <div className="max-w-4xl mx-auto space-y-6">
+                        {messages.length === 0 ? (
+                            <div className="text-center py-12 text-gray-400 bg-white/5 rounded-2xl border border-white/10">
+                                Henüz mesaj bulunmamaktadır.
+                            </div>
+                        ) : (
+                            messages.map((msg) => (
+                                <div key={msg.id} className="bg-white/5 border border-white/10 p-6 rounded-2xl">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white mb-1">{msg.subject}</h3>
+                                            <p className="text-primary font-medium">{msg.name}</p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-sm text-gray-500">
+                                                {new Date(msg.date).toLocaleDateString("tr-TR")}
+                                            </span>
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm("Bu mesajı silmek istediğinize emin misiniz?")) deleteMessage(msg.id);
+                                                }}
+                                                className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 size={20} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="mb-4">
+                                        <span className="text-sm text-gray-500 block mb-1">E-posta</span>
+                                        <a href={`mailto:${msg.email}`} className="text-white hover:text-primary transition-colors">
+                                            {msg.email}
+                                        </a>
+                                    </div>
+                                    <div className="bg-black/30 p-4 rounded-xl text-gray-300 text-sm leading-relaxed">
+                                        {msg.message}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
                 {/* Content Tab */}
                 {activeTab === "content" && (
                     <div className="flex justify-center py-12">
@@ -297,8 +457,16 @@ function ApplicationsList() {
                 <div key={app.id} className="bg-white/5 border border-white/10 p-6 rounded-2xl">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <h3 className="text-xl font-bold text-white mb-1">{app.name}</h3>
-                            <p className="text-primary font-medium">{app.position}</p>
+                            <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-xl font-bold text-white">{app.name}</h3>
+                                <span className={`text-xs px-2 py-1 rounded-full font-bold ${app.type === 'franchise'
+                                    ? "bg-purple-500/20 text-purple-500"
+                                    : "bg-blue-500/20 text-blue-500"
+                                    }`}>
+                                    {app.type === 'franchise' ? "Franchise" : "İş Başvurusu"}
+                                </span>
+                            </div>
+                            <p className="text-primary font-medium">{app.position || "Franchise Adayı"}</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <span className="text-sm text-gray-500">
@@ -325,9 +493,23 @@ function ApplicationsList() {
                             <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Telefon</span>
                             {app.phone}
                         </div>
+                        {app.type === 'franchise' && (
+                            <>
+                                <div>
+                                    <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Lokasyon</span>
+                                    {app.location}
+                                </div>
+                                <div>
+                                    <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">Bütçe</span>
+                                    {app.budget}
+                                </div>
+                            </>
+                        )}
                     </div>
                     <div>
-                        <span className="block text-xs text-gray-500 uppercase tracking-wider mb-2">Ön Yazı</span>
+                        <span className="block text-xs text-gray-500 uppercase tracking-wider mb-2">
+                            {app.type === 'franchise' ? "Eklemek İstedikleri" : "Ön Yazı"}
+                        </span>
                         <p className="text-gray-300 bg-black/30 p-4 rounded-xl text-sm leading-relaxed">
                             {app.message}
                         </p>

@@ -37,6 +37,12 @@ export interface SiteContent {
     socialInstagram?: string;
     socialFacebook?: string;
     socialTwitter?: string;
+
+    // Stats
+    statBeef?: string;
+    statCustomers?: string;
+    statExperience?: string;
+    statAwards?: string;
 }
 
 export interface Application {
@@ -44,7 +50,28 @@ export interface Application {
     name: string;
     email: string;
     phone: string;
-    position: string;
+    position: string; // "Genel Başvuru" or specific job title
+    message: string;
+    date: string;
+    type: 'job' | 'franchise'; // New field
+    location?: string; // For franchise
+    budget?: string; // For franchise
+}
+
+export interface JobPosting {
+    id: string;
+    title: string;
+    location: string;
+    type: string; // e.g. "Tam Zamanlı"
+    description: string;
+    isActive: boolean;
+}
+
+export interface Message {
+    id: string;
+    name: string;
+    email: string;
+    subject: string;
     message: string;
     date: string;
 }
@@ -77,6 +104,17 @@ interface DataContextType {
     addCategory: (category: string) => Promise<void>;
     deleteCategory: (category: string) => Promise<void>;
 
+    // Job Postings
+    jobPostings: JobPosting[];
+    addJobPosting: (job: Omit<JobPosting, "id">) => Promise<void>;
+    updateJobPosting: (id: string, job: Partial<JobPosting>) => Promise<void>;
+    deleteJobPosting: (id: string) => Promise<void>;
+
+    // Messages
+    messages: Message[];
+    addMessage: (message: Omit<Message, "id" | "date">) => Promise<void>;
+    deleteMessage: (id: string) => Promise<void>;
+
     isLoading: boolean;
 }
 
@@ -98,6 +136,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const [siteContent, setSiteContent] = useState<SiteContent>(DEFAULT_CONTENT);
     const [applications, setApplications] = useState<Application[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
+    const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch Data from Supabase
@@ -131,13 +171,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                     workingHours: contentData.working_hours,
                     socialInstagram: contentData.social_instagram,
                     socialFacebook: contentData.social_facebook,
-                    socialTwitter: contentData.social_twitter
+                    socialTwitter: contentData.social_twitter,
+                    statBeef: contentData.stat_beef,
+                    statCustomers: contentData.stat_customers,
+                    statExperience: contentData.stat_experience,
+                    statAwards: contentData.stat_awards
                 });
             }
 
             // Applications
             const { data: applicationsData } = await supabase.from('applications').select('*').order('created_at', { ascending: false });
             if (applicationsData) setApplications(applicationsData);
+
+            // Job Postings
+            const { data: jobsData } = await supabase.from('job_postings').select('*');
+            if (jobsData) setJobPostings(jobsData);
+
+            // Messages
+            const { data: messagesData } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
+            if (messagesData) setMessages(messagesData);
 
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -208,6 +260,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (content.socialInstagram !== undefined) dbContent.social_instagram = content.socialInstagram;
         if (content.socialFacebook !== undefined) dbContent.social_facebook = content.socialFacebook;
         if (content.socialTwitter !== undefined) dbContent.social_twitter = content.socialTwitter;
+        if (content.statBeef !== undefined) dbContent.stat_beef = content.statBeef;
+        if (content.statCustomers !== undefined) dbContent.stat_customers = content.statCustomers;
+        if (content.statExperience !== undefined) dbContent.stat_experience = content.statExperience;
+        if (content.statAwards !== undefined) dbContent.stat_awards = content.statAwards;
 
         const { error } = await supabase.from('site_content').update(dbContent).eq('id', 1);
         if (error) console.error("Error updating content:", error);
@@ -240,6 +296,38 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         else refreshData();
     };
 
+    // Job Posting Actions
+    const addJobPosting = async (job: Omit<JobPosting, "id">) => {
+        const { error } = await supabase.from('job_postings').insert([job]);
+        if (error) console.error("Error adding job posting:", error);
+        else refreshData();
+    };
+
+    const updateJobPosting = async (id: string, updatedFields: Partial<JobPosting>) => {
+        const { error } = await supabase.from('job_postings').update(updatedFields).eq('id', id);
+        if (error) console.error("Error updating job posting:", error);
+        else refreshData();
+    };
+
+    const deleteJobPosting = async (id: string) => {
+        const { error } = await supabase.from('job_postings').delete().eq('id', id);
+        if (error) console.error("Error deleting job posting:", error);
+        else refreshData();
+    };
+
+    // Message Actions
+    const addMessage = async (message: Omit<Message, "id" | "date">) => {
+        const { error } = await supabase.from('messages').insert([message]);
+        if (error) console.error("Error adding message:", error);
+        else refreshData();
+    };
+
+    const deleteMessage = async (id: string) => {
+        const { error } = await supabase.from('messages').delete().eq('id', id);
+        if (error) console.error("Error deleting message:", error);
+        else refreshData();
+    };
+
     return (
         <DataContext.Provider
             value={{
@@ -260,6 +348,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                 categories,
                 addCategory,
                 deleteCategory,
+                jobPostings,
+                addJobPosting,
+                updateJobPosting,
+                deleteJobPosting,
+                messages,
+                addMessage,
+                deleteMessage,
                 isLoading
             }}
         >

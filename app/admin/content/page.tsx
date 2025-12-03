@@ -22,6 +22,10 @@ export default function ContentPage() {
         socialInstagram: "",
         socialFacebook: "",
         socialTwitter: "",
+        statBeef: "",
+        statCustomers: "",
+        statExperience: "",
+        statAwards: "",
     });
 
     useEffect(() => {
@@ -39,6 +43,10 @@ export default function ContentPage() {
                 socialInstagram: siteContent.socialInstagram || "",
                 socialFacebook: siteContent.socialFacebook || "",
                 socialTwitter: siteContent.socialTwitter || "",
+                statBeef: siteContent.statBeef || "100%",
+                statCustomers: siteContent.statCustomers || "50k+",
+                statExperience: siteContent.statExperience || "10+",
+                statAwards: siteContent.statAwards || "5",
             });
         }
     }, [siteContent]);
@@ -191,6 +199,59 @@ export default function ContentPage() {
                         </div>
                     </div>
 
+
+                    {/* Stats Section */}
+                    <div className="bg-white/5 border border-white/10 p-8 rounded-2xl space-y-6">
+                        <h2 className="text-xl font-bold text-primary border-b border-white/10 pb-4">
+                            Hakkımızda İstatistikleri
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Dana Eti Oranı (örn: 100%)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.statBeef}
+                                    onChange={(e) => setFormData({ ...formData, statBeef: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Mutlu Müşteri (örn: 50k+)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.statCustomers}
+                                    onChange={(e) => setFormData({ ...formData, statCustomers: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Yıllık Deneyim (örn: 10+)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.statExperience}
+                                    onChange={(e) => setFormData({ ...formData, statExperience: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    Kazanılan Ödül (örn: 5)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.statAwards}
+                                    onChange={(e) => setFormData({ ...formData, statAwards: e.target.value })}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                />
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Social Media Section */}
                     <div className="bg-white/5 border border-white/10 p-8 rounded-2xl space-y-6">

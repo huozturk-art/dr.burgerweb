@@ -12,10 +12,10 @@ const AboutContent = () => {
     const { siteContent } = useData();
 
     const stats = [
-        { icon: <Flame size={32} />, value: "100%", label: "Dana Eti" },
-        { icon: <Users size={32} />, value: "50k+", label: "Mutlu Müşteri" },
-        { icon: <Clock size={32} />, value: "10+", label: "Yıllık Deneyim" },
-        { icon: <Award size={32} />, value: "5", label: "Gurme Ödülü" },
+        { icon: <Flame size={32} />, value: siteContent?.statBeef || "100%", label: "Dana Eti" },
+        { icon: <Users size={32} />, value: siteContent?.statCustomers || "50k+", label: "Mutlu Müşteri" },
+        { icon: <Clock size={32} />, value: siteContent?.statExperience || "10+", label: "Yıllık Deneyim" },
+        { icon: <Award size={32} />, value: siteContent?.statAwards || "5", label: "Gurme Ödülü" },
     ];
 
     return (
