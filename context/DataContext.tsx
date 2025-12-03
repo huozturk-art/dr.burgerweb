@@ -40,9 +40,13 @@ export interface SiteContent {
 
     // Stats
     statBeef?: string;
+    statBeefLabel?: string;
     statCustomers?: string;
+    statCustomersLabel?: string;
     statExperience?: string;
+    statExperienceLabel?: string;
     statAwards?: string;
+    statAwardsLabel?: string;
 }
 
 export interface Application {
@@ -173,9 +177,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                     socialFacebook: contentData.social_facebook,
                     socialTwitter: contentData.social_twitter,
                     statBeef: contentData.stat_beef,
+                    statBeefLabel: contentData.stat_beef_label,
                     statCustomers: contentData.stat_customers,
+                    statCustomersLabel: contentData.stat_customers_label,
                     statExperience: contentData.stat_experience,
-                    statAwards: contentData.stat_awards
+                    statExperienceLabel: contentData.stat_experience_label,
+                    statAwards: contentData.stat_awards,
+                    statAwardsLabel: contentData.stat_awards_label
                 });
             }
 
@@ -261,9 +269,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (content.socialFacebook !== undefined) dbContent.social_facebook = content.socialFacebook;
         if (content.socialTwitter !== undefined) dbContent.social_twitter = content.socialTwitter;
         if (content.statBeef !== undefined) dbContent.stat_beef = content.statBeef;
+        if (content.statBeefLabel !== undefined) dbContent.stat_beef_label = content.statBeefLabel;
         if (content.statCustomers !== undefined) dbContent.stat_customers = content.statCustomers;
+        if (content.statCustomersLabel !== undefined) dbContent.stat_customers_label = content.statCustomersLabel;
         if (content.statExperience !== undefined) dbContent.stat_experience = content.statExperience;
+        if (content.statExperienceLabel !== undefined) dbContent.stat_experience_label = content.statExperienceLabel;
         if (content.statAwards !== undefined) dbContent.stat_awards = content.statAwards;
+        if (content.statAwardsLabel !== undefined) dbContent.stat_awards_label = content.statAwardsLabel;
 
         const { error } = await supabase.from('site_content').update(dbContent).eq('id', 1);
         if (error) console.error("Error updating content:", error);

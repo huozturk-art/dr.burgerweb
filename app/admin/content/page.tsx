@@ -23,9 +23,13 @@ export default function ContentPage() {
         socialFacebook: "",
         socialTwitter: "",
         statBeef: "",
+        statBeefLabel: "",
         statCustomers: "",
+        statCustomersLabel: "",
         statExperience: "",
+        statExperienceLabel: "",
         statAwards: "",
+        statAwardsLabel: "",
     });
 
     useEffect(() => {
@@ -44,9 +48,13 @@ export default function ContentPage() {
                 socialFacebook: siteContent.socialFacebook || "",
                 socialTwitter: siteContent.socialTwitter || "",
                 statBeef: siteContent.statBeef || "100%",
+                statBeefLabel: siteContent.statBeefLabel || "Dana Eti",
                 statCustomers: siteContent.statCustomers || "50k+",
+                statCustomersLabel: siteContent.statCustomersLabel || "Mutlu Müşteri",
                 statExperience: siteContent.statExperience || "10+",
+                statExperienceLabel: siteContent.statExperienceLabel || "Yıllık Deneyim",
                 statAwards: siteContent.statAwards || "5",
+                statAwardsLabel: siteContent.statAwardsLabel || "Gurme Ödülü",
             });
         }
     }, [siteContent]);
@@ -206,49 +214,104 @@ export default function ContentPage() {
                             Hakkımızda İstatistikleri
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">
-                                    Dana Eti Oranı (örn: 100%)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.statBeef}
-                                    onChange={(e) => setFormData({ ...formData, statBeef: e.target.value })}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                />
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Dana Eti Oranı (Değer)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statBeef}
+                                        onChange={(e) => setFormData({ ...formData, statBeef: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Dana Eti Oranı (Etiket)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statBeefLabel}
+                                        onChange={(e) => setFormData({ ...formData, statBeefLabel: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">
-                                    Mutlu Müşteri (örn: 50k+)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.statCustomers}
-                                    onChange={(e) => setFormData({ ...formData, statCustomers: e.target.value })}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                />
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Mutlu Müşteri (Değer)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statCustomers}
+                                        onChange={(e) => setFormData({ ...formData, statCustomers: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Mutlu Müşteri (Etiket)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statCustomersLabel}
+                                        onChange={(e) => setFormData({ ...formData, statCustomersLabel: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">
-                                    Yıllık Deneyim (örn: 10+)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.statExperience}
-                                    onChange={(e) => setFormData({ ...formData, statExperience: e.target.value })}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                />
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Yıllık Deneyim (Değer)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statExperience}
+                                        onChange={(e) => setFormData({ ...formData, statExperience: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Yıllık Deneyim (Etiket)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statExperienceLabel}
+                                        onChange={(e) => setFormData({ ...formData, statExperienceLabel: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">
-                                    Kazanılan Ödül (örn: 5)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.statAwards}
-                                    onChange={(e) => setFormData({ ...formData, statAwards: e.target.value })}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                />
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Kazanılan Ödül (Değer)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statAwards}
+                                        onChange={(e) => setFormData({ ...formData, statAwards: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                                        Kazanılan Ödül (Etiket)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.statAwardsLabel}
+                                        onChange={(e) => setFormData({ ...formData, statAwardsLabel: e.target.value })}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
