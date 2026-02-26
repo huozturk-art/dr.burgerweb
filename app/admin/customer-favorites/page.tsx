@@ -4,7 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import {
     Search, Phone, User, Beef, ChevronRight,
-    PlusCircle, ShoppingCart, Loader2, Info, CheckCircle
+    PlusCircle, ShoppingCart, Loader2, Info, CheckCircle, Trash2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -117,6 +117,24 @@ export default function CustomerFavoritesPage() {
         }
     };
 
+    const deleteFavorite = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!confirm("Bu favori tasarımı silmek istediğinize emin misiniz?")) return;
+
+        try {
+            const { error } = await supabase
+                .from("saved_burgers")
+                .delete()
+                .eq("id", id);
+
+            if (error) throw error;
+            setResults(prev => prev.filter(b => b.id !== id));
+        } catch (error) {
+            console.error("Delete error:", error);
+            alert("Silme işlemi başarısız oldu.");
+        }
+    };
+
     return (
         <div className="p-8 max-w-6xl mx-auto">
             <header className="mb-8">
@@ -187,8 +205,17 @@ export default function CustomerFavoritesPage() {
                                             </h3>
                                             <p className="text-xs text-gray-500 mt-1">Kayıt: {new Date(burger.created_at).toLocaleDateString("tr-TR")}</p>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-primary font-black text-xl">₺{burger.total_price}</p>
+                                        <div className="flex gap-2">
+                                            <div className="text-right">
+                                                <p className="text-primary font-black text-xl">₺{burger.total_price}</p>
+                                            </div>
+                                            <button
+                                                onClick={(e) => deleteFavorite(burger.id, e)}
+                                                className="p-2 text-gray-600 hover:text-red-500 transition-colors"
+                                                title="Sil"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </div>
                                     </div>
 

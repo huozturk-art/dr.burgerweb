@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 import { CartProvider } from "@/context/CartContext";
 import { DataProvider } from "@/context/DataContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { TableProvider } from "@/context/TableContext";
 
 export default function RootLayout({
   children,
@@ -26,12 +27,14 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased`}
       >
-        <DataProvider>
-          <CartProvider>
-            {children}
-            <SpeedInsights />
-          </CartProvider>
-        </DataProvider>
+        <TableProvider>
+          <DataProvider>
+            <CartProvider>
+              {children}
+              <SpeedInsights />
+            </CartProvider>
+          </DataProvider>
+        </TableProvider>
       </body>
     </html>
   );

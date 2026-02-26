@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/context/CartContext";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const { totalItems } = useCart();
+    const pathname = usePathname();
 
     const navLinks = [
         { name: "Ana Sayfa", href: "/" },
@@ -34,7 +38,7 @@ const Navbar = () => {
                         />
                     </Link>
 
-                    {/* Desktop Menu */}
+                    {/* Desktop Right Actions */}
                     <div className="hidden lg:flex items-center space-x-6">
                         {navLinks.map((link) => (
                             <Link
@@ -45,10 +49,31 @@ const Navbar = () => {
                                 {link.name}
                             </Link>
                         ))}
+
+                        {pathname !== "/" && (
+                            <Link href="/cart" className="relative p-2 text-gray-300 hover:text-primary transition-colors group">
+                                <ShoppingBag size={24} />
+                                {totalItems > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                        {totalItems}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <div className="lg:hidden">
+                    {/* Mobile Menu & Cart Button */}
+                    <div className="lg:hidden flex items-center gap-4">
+                        {pathname !== "/" && (
+                            <Link href="/cart" className="relative p-2 text-gray-300">
+                                <ShoppingBag size={24} />
+                                {totalItems > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                                        {totalItems}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="text-gray-300 hover:text-white p-2"

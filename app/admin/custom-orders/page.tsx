@@ -4,12 +4,15 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import {
     Bell, BellOff, Printer, Clock, CheckCircle, ChefHat, Coffee,
-    CreditCard, XCircle, RefreshCw, Filter, Volume2, VolumeX
+    CreditCard, RefreshCw, Filter, Volume2, VolumeX, Trash2
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface OrderBurger {
     id: string;
     burger_name: string;
+    product_id: string | null;
+    is_custom: boolean;
     notes: string | null;
     total_price: number;
     burger_ingredients: {
@@ -97,7 +100,7 @@ const statusConfig: Record<string, {
         label: "İptal",
         color: "text-red-500",
         bgColor: "bg-red-500/10 border-red-500/20",
-        icon: <XCircle size={16} />,
+        icon: <CheckCircle size={16} />,
         nextStatus: null,
         nextLabel: null,
     },
@@ -108,8 +111,18 @@ export default function CustomOrdersPage() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<string>("active"); // active, all, paid
     const [soundEnabled, setSoundEnabled] = useState(true);
+    const [autoPrintEnabled, setAutoPrintEnabled] = useState(false);
+    const [isAlarmActive, setIsAlarmActive] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const alarmIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const prevOrderCount = useRef(0);
+
+    // Request notification permission
+    useEffect(() => {
+        if ("Notification" in window) {
+            Notification.requestPermission();
+        }
+    }, []);
 
     // Fetch orders
     const fetchOrders = useCallback(async () => {
@@ -130,13 +143,26 @@ export default function CustomOrdersPage() {
             if (data) {
                 setOrders(data as CustomOrder[]);
 
-                // Play sound for new orders
-                if (
-                    prevOrderCount.current > 0 &&
-                    data.length > prevOrderCount.current &&
-                    soundEnabled
-                ) {
-                    playNotificationSound();
+                const hasPending = data.some((o: CustomOrder) => o.status === "pending");
+                setIsAlarmActive(hasPending);
+
+                // Check for new orders
+                if (prevOrderCount.current > 0 && data.length > prevOrderCount.current) {
+                    const newOrdersCount = data.length - prevOrderCount.current;
+                    const newOrders = data.slice(0, newOrdersCount);
+
+                    // Native notification
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification("YENİ SİPARİŞ GELDİ! 🚨", {
+                            body: `Mutfak paneline ${newOrdersCount} yeni sipariş düştü.`,
+                            icon: "/favicon.ico"
+                        });
+                    }
+
+                    // Auto Print
+                    if (autoPrintEnabled && newOrders.length > 0) {
+                        setTimeout(() => printOrder(newOrders[0]), 1000);
+                    }
                 }
                 prevOrderCount.current = data.length;
             }
@@ -145,33 +171,52 @@ export default function CustomOrdersPage() {
         } finally {
             setLoading(false);
         }
-    }, [soundEnabled]);
+    }, [autoPrintEnabled]);
 
     // Notification sound
-    const playNotificationSound = () => {
+    const playAlarmSound = useCallback(() => {
         try {
-            const ctx = new AudioContext();
+            const ctx = new window.AudioContext();
             const o = ctx.createOscillator();
             const g = ctx.createGain();
             o.connect(g);
             g.connect(ctx.destination);
-            o.type = "sine";
+            o.type = "sawtooth"; // harsher sound for kitchen
 
-            // Play a pleasant notification melody
             const now = ctx.currentTime;
-            o.frequency.setValueAtTime(880, now);         // A5
-            o.frequency.setValueAtTime(1100, now + 0.15); // C#6
-            o.frequency.setValueAtTime(1320, now + 0.3);  // E6
+            o.frequency.setValueAtTime(800, now);
+            o.frequency.setValueAtTime(1200, now + 0.2);
+            o.frequency.setValueAtTime(800, now + 0.4);
+            o.frequency.setValueAtTime(1200, now + 0.6);
 
-            g.gain.setValueAtTime(0.3, now);
-            g.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            g.gain.setValueAtTime(0.5, now);
+            g.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
 
             o.start(now);
-            o.stop(now + 0.5);
+            o.stop(now + 0.8);
         } catch (e) {
             console.log("Audio not available");
         }
-    };
+    }, []);
+
+    // Continuous Alarm Loop
+    useEffect(() => {
+        if (isAlarmActive && soundEnabled) {
+            playAlarmSound(); // Play immediately
+            alarmIntervalRef.current = setInterval(playAlarmSound, 3000); // Repeat every 3s
+        } else {
+            if (alarmIntervalRef.current) {
+                clearInterval(alarmIntervalRef.current);
+                alarmIntervalRef.current = null;
+            }
+        }
+        return () => {
+            if (alarmIntervalRef.current) {
+                clearInterval(alarmIntervalRef.current);
+                alarmIntervalRef.current = null;
+            }
+        };
+    }, [isAlarmActive, soundEnabled, playAlarmSound]);
 
     // Realtime subscription
     useEffect(() => {
@@ -224,10 +269,52 @@ export default function CustomOrdersPage() {
         }
     };
 
-    // Cancel order
-    const cancelOrder = async (orderId: string) => {
-        if (!confirm("Bu siparişi iptal etmek istediğinize emin misiniz?")) return;
-        await updateStatus(orderId, "cancelled");
+    // Permanently delete order (with cascade)
+    const deleteOrder = async (orderId: string, orderNumber: string) => {
+        if (!confirm(`"${orderNumber}" numaralı siparişi silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz.`)) return;
+
+        try {
+            // 1. Get all order_burger IDs first
+            const { data: burgers, error: fetchErr } = await supabase
+                .from("order_burgers")
+                .select("id")
+                .eq("order_id", orderId);
+
+            if (fetchErr) throw fetchErr;
+
+            // 2. Delete burger_ingredients for each order_burger
+            if (burgers && burgers.length > 0) {
+                const burgerIds = burgers.map((b) => b.id);
+                const { error: ingErr } = await supabase
+                    .from("burger_ingredients")
+                    .delete()
+                    .in("order_burger_id", burgerIds);
+
+                if (ingErr) throw ingErr;
+            }
+
+            // 3. Delete order_burgers
+            const { error: burgersErr } = await supabase
+                .from("order_burgers")
+                .delete()
+                .eq("order_id", orderId);
+
+            if (burgersErr) throw burgersErr;
+
+            // 4. Delete the main order
+            const { error: orderErr } = await supabase
+                .from("custom_orders")
+                .delete()
+                .eq("id", orderId);
+
+            if (orderErr) throw orderErr;
+
+            // Optimistic update
+            setOrders(prev => prev.filter(o => o.id !== orderId));
+        } catch (error: any) {
+            console.error("Error deleting order:", error);
+            alert(`Sipariş silinirken hata oluştu: ${error?.message || error}`);
+        }
     };
 
     // Print order
@@ -235,12 +322,22 @@ export default function CustomOrdersPage() {
         const printWindow = window.open("", "_blank", "width=350,height=600");
         if (!printWindow) return;
 
-        const allIngredients = order.order_burgers.flatMap(b => b.burger_ingredients);
-
-        // Group by category (basic grouping by position)
-        const ingredientLines = allIngredients
-            .map(i => `<tr><td style="padding:2px 0">${i.ingredient_name}${i.quantity > 1 ? ` x${i.quantity}` : ""}</td><td style="text-align:right;padding:2px 0">${(i.unit_price * i.quantity) > 0 ? `₺${(i.unit_price * i.quantity).toFixed(2)}` : "Dahil"}</td></tr>`)
-            .join("");
+        // Build item rows - handle both custom burgers (with ingredients) and standard items
+        const itemRows = order.order_burgers.map(burger => {
+            if (burger.is_custom && burger.burger_ingredients && burger.burger_ingredients.length > 0) {
+                // Custom burger: show name + each ingredient
+                const ingLines = burger.burger_ingredients
+                    .map(i => `<tr><td style="padding:1px 0 1px 10px;color:#555">↳ ${i.ingredient_name}${i.quantity > 1 ? ` x${i.quantity}` : ""}</td><td style="text-align:right;padding:1px 0;color:#555">${(i.unit_price * i.quantity) > 0 ? `₺${(i.unit_price * i.quantity).toFixed(2)}` : "Dahil"}</td></tr>`)
+                    .join("");
+                return `
+                    <tr><td class="bold" style="padding:3px 0">🍔 ${burger.burger_name}</td><td style="text-align:right;padding:3px 0" class="bold">₺${burger.total_price.toFixed(2)}</td></tr>
+                    ${ingLines}
+                `;
+            } else {
+                // Standard menu item: just name and price
+                return `<tr><td class="bold" style="padding:3px 0">📦 ${burger.burger_name}</td><td style="text-align:right;padding:3px 0" class="bold">₺${burger.total_price.toFixed(2)}</td></tr>`;
+            }
+        }).join('<tr><td colspan="2"><hr style="border:none;border-top:1px dotted #ccc;margin:2px 0"/></td></tr>');
 
         printWindow.document.write(`
       <!DOCTYPE html>
@@ -254,14 +351,14 @@ export default function CustomOrdersPage() {
           .bold { font-weight: bold; }
           .line { border-top: 1px dashed #000; margin: 4px 0; }
           .big { font-size: 18px; }
-          table { width: 100%; }
-          .total { font-size: 16px; font-weight: bold; }
+          table { width: 100%; border-collapse: collapse; }
+          .total { font-size: 14px; font-weight: bold; }
           @media print { body { width: 80mm; } }
         </style>
       </head>
       <body>
         <div class="center bold big">DR. BURGER</div>
-        <div class="center" style="margin-bottom:4px">Custom Burger Sipariş</div>
+        <div class="center" style="margin-bottom:4px">Sipariş Fişi</div>
         <div class="line"></div>
         <table>
           <tr><td class="bold">Masa:</td><td style="text-align:right" class="bold big">${order.table_number}</td></tr>
@@ -270,15 +367,14 @@ export default function CustomOrdersPage() {
           ${order.customer_name ? `<tr><td>Müşteri:</td><td style="text-align:right">${order.customer_name}</td></tr>` : ""}
         </table>
         <div class="line"></div>
-        <div class="bold" style="margin-bottom:4px">🍔 Custom Burger</div>
-        <table>${ingredientLines}</table>
+        <table>${itemRows}</table>
         ${order.notes ? `<div class="line"></div><div><span class="bold">Not:</span> ${order.notes}</div>` : ""}
         <div class="line"></div>
         <table><tr><td class="total">TOPLAM:</td><td class="total" style="text-align:right">₺${order.total_price.toFixed(2)}</td></tr></table>
         <div class="line"></div>
         <div class="center" style="margin-top:8px;font-size:10px">
           ${new Date(order.created_at).toLocaleDateString("tr-TR")}<br/>
-          Afiyet olsun! 🍔
+          Afiyet olsun! 🏪
         </div>
         <script>window.onload=()=>{window.print();}</script>
       </body>
@@ -314,13 +410,29 @@ export default function CustomOrdersPage() {
     }
 
     return (
-        <div className="p-4 md:p-8">
+        <div className="p-4 md:p-8 relative">
+            {/* Visual Alarm */}
+            <AnimatePresence>
+                {isAlarmActive && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 0.5, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                        className="fixed inset-0 pointer-events-none z-[200] border-[16px] border-red-500/80 bg-red-500/10"
+                    >
+                        <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-red-600 text-white px-8 py-3 rounded-full font-black text-2xl tracking-widest shadow-[0_0_50px_rgba(255,0,0,0.8)]">
+                            ⚠️ YENİ SİPARİŞ ⚠️
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 relative z-10">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
-                            🍔 Custom Burger Siparişleri
+                            🏪 Sipariş Yönetimi
                             {pendingCount > 0 && (
                                 <span className="px-3 py-1 bg-red-500 text-white text-sm rounded-full animate-pulse">
                                     {pendingCount} yeni
@@ -333,12 +445,24 @@ export default function CustomOrdersPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
+                        {/* Auto-Print toggle */}
+                        <button
+                            onClick={() => setAutoPrintEnabled(!autoPrintEnabled)}
+                            className={`p-3 rounded-xl border transition-colors ${autoPrintEnabled
+                                ? "bg-primary/10 border-primary/30 text-primary"
+                                : "bg-white/5 border-white/10 text-gray-500"
+                                }`}
+                            title={autoPrintEnabled ? "Otomatik yazdırma açık" : "Otomatik yazdırma kapalı"}
+                        >
+                            <Printer size={20} />
+                        </button>
+
                         {/* Sound toggle */}
                         <button
                             onClick={() => setSoundEnabled(!soundEnabled)}
                             className={`p-3 rounded-xl border transition-colors ${soundEnabled
-                                    ? "bg-primary/10 border-primary/30 text-primary"
-                                    : "bg-white/5 border-white/10 text-gray-500"
+                                ? "bg-primary/10 border-primary/30 text-primary"
+                                : "bg-white/5 border-white/10 text-gray-500"
                                 }`}
                             title={soundEnabled ? "Sesli bildirim açık" : "Sesli bildirim kapalı"}
                         >
@@ -365,8 +489,8 @@ export default function CustomOrdersPage() {
                                     key={key}
                                     onClick={() => setFilter(key)}
                                     className={`px-4 py-2 text-sm font-medium transition-colors ${filter === key
-                                            ? "bg-primary text-white"
-                                            : "text-gray-400 hover:text-white"
+                                        ? "bg-primary text-white"
+                                        : "text-gray-400 hover:text-white"
                                         }`}
                                 >
                                     {label}
@@ -429,25 +553,31 @@ export default function CustomOrdersPage() {
                                     <div className="px-4 pb-3">
                                         <div className="bg-black/20 rounded-xl p-3">
                                             {order.order_burgers.map((burger) => (
-                                                <div key={burger.id}>
-                                                    {burger.burger_ingredients.map((ing) => (
+                                                <div key={burger.id} className="mb-3 last:mb-0">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="font-bold text-white text-sm">
+                                                            {burger.is_custom ? "🍔 " : "📦 "}{burger.burger_name}
+                                                        </span>
+                                                        {(!burger.burger_ingredients || burger.burger_ingredients.length === 0) && (
+                                                            <span className="text-primary font-bold text-xs">
+                                                                ₺{burger.total_price.toFixed(2)}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {burger.burger_ingredients && burger.burger_ingredients.map((ing) => (
                                                         <div
                                                             key={ing.id}
-                                                            className="text-sm text-gray-300 py-0.5 flex justify-between"
+                                                            className="text-xs text-gray-400 py-0.5 ml-4 flex justify-between"
                                                         >
                                                             <span>
-                                                                {ing.ingredient_name}
+                                                                • {ing.ingredient_name}
                                                                 {ing.quantity > 1 && (
                                                                     <span className="text-gray-500">
                                                                         {" "}x{ing.quantity}
                                                                     </span>
                                                                 )}
                                                             </span>
-                                                            {ing.unit_price > 0 && (
-                                                                <span className="text-gray-500 text-xs">
-                                                                    ₺{(ing.unit_price * ing.quantity).toFixed(2)}
-                                                                </span>
-                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -485,16 +615,14 @@ export default function CustomOrdersPage() {
                                             </button>
                                         )}
 
-                                        {/* Cancel */}
-                                        {!["paid", "cancelled"].includes(order.status) && (
-                                            <button
-                                                onClick={() => cancelOrder(order.id)}
-                                                className="flex-shrink-0 p-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-colors"
-                                                title="İptal"
-                                            >
-                                                <XCircle size={18} />
-                                            </button>
-                                        )}
+                                        {/* Delete */}
+                                        <button
+                                            onClick={() => deleteOrder(order.id, order.order_number)}
+                                            className="flex-shrink-0 p-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all"
+                                            title="Sil"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
                                     </div>
                                 </div>
                             );

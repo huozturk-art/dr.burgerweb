@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, ShoppingBag, Plus, Minus, X, Info, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -25,7 +25,12 @@ interface Props {
     branchId?: string;
 }
 
+import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
+
 export default function BurgerBuilder({ categories, tableNumber, branchId }: Props) {
+    const { addItem } = useCart();
+    const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
     const [burger, setBurger] = useState<BurgerInProgress>({
         selections: new Map(),
@@ -40,6 +45,11 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
     const [favoriteError, setFavoriteError] = useState<string | null>(null);
     const [savedBurgers, setSavedBurgers] = useState<any[]>([]);
     const [selectionMode, setSelectionMode] = useState(false); // phone input vs list selection
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const totalSteps = categories.length;
     const currentCategory = categories[currentStep];
@@ -292,81 +302,31 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
         }
     };
 
-    // Submit order
-    const submitOrder = async (customerName: string, customerPhone: string, notes: string, saveAsFavorite: boolean, favoriteName: string) => {
+    // Add to cart instead of direct submit
+    const addToCart = async (customerName: string, customerPhone: string, notes: string, saveAsFavorite: boolean, favoriteName: string) => {
         if (submitting) return;
         setSubmitting(true);
 
         try {
-            // Generate order number
-            const now = new Date();
-            const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}${(now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()).toString().slice(-4)}`;
-            const randomNum = Math.floor(Math.random() * 900) + 100;
-            const orderNumber = `CB-${dateStr}-${randomNum}`;
-
+            const selections = getAllSelections();
             const totalPrice = calculateTotal();
 
-            // 1. Create order
-            const { data: order, error: orderErr } = await supabase
-                .from("custom_orders")
-                .insert({
-                    order_number: orderNumber,
-                    branch_id: branchId || null,
-                    table_number: tableNumber,
-                    customer_name: customerName || null,
-                    customer_phone: customerPhone || null,
-                    notes: notes || null,
-                    total_price: totalPrice,
-                    status: "pending",
-                })
-                .select()
-                .single();
+            // 1. Add to cart context
+            const finalBurgerName = favoriteName || `${customerName || "Misafir"}'in Özel Burgeri`;
 
-            if (orderErr) {
-                console.error("Order Insert Error:", orderErr);
-                throw new Error("Sipariş ana kaydı oluşturulamadı.");
-            }
+            addItem({
+                id: `cb-${Date.now()}`,
+                name: "Özel Burger",
+                burgerName: finalBurgerName,
+                price: totalPrice,
+                isCustom: true,
+                customSelections: selections,
+                image: "/images/custom-burger-icon.png"
+            });
 
-            // 2. Create burger
-            const { data: burgerData, error: burgerErr } = await supabase
-                .from("order_burgers")
-                .insert({
-                    order_id: order.id,
-                    burger_name: "Custom Burger",
-                    total_price: totalPrice,
-                })
-                .select()
-                .single();
-
-            if (burgerErr) {
-                console.error("Burger Insert Error:", burgerErr);
-                throw new Error("Burger detayı oluşturulamadı.");
-            }
-
-            // 3. Create burger ingredients
-            const allSelections = getAllSelections();
-            if (allSelections.length > 0) {
-                const ingredientRows = allSelections.map((s) => ({
-                    order_burger_id: burgerData.id,
-                    ingredient_id: s.ingredient.id,
-                    ingredient_name: s.ingredient.name,
-                    quantity: s.quantity,
-                    unit_price: s.ingredient.price,
-                }));
-
-                const { error: ingErr } = await supabase
-                    .from("burger_ingredients")
-                    .insert(ingredientRows);
-
-                if (ingErr) {
-                    console.error("Ingredients Insert Error:", ingErr);
-                    throw new Error("Malzeme detayları kaydedilemedi.");
-                }
-            }
-
-            // 4. Save to favorites if requested
+            // 2. Save to favorites if requested (still goes to DB immediately for persistence)
             if (saveAsFavorite && customerPhone && customerPhone.length >= 10) {
-                const ingredientsJson = allSelections.map(s => ({
+                const ingredientsJson = selections.map(s => ({
                     ingredient_id: s.ingredient.id,
                     name: s.ingredient.name,
                     category: s.categoryName,
@@ -379,72 +339,25 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
                         phone: customerPhone,
                         ingredients_json: ingredientsJson,
                         total_price: totalPrice,
-                        burger_name: favoriteName || `${customerName || "Misafir"}'in Burgeri`
+                        burger_name: finalBurgerName
                     });
             }
 
-            // Success!
-            console.log("Order submitted successfully:", orderNumber);
-            setOrderSuccess(orderNumber);
+            alert("Özel tasarım burgeriniz sepete eklendi! 🍔");
+            router.push("/menu");
+            setOrderSuccess(null);
+            setShowOrderForm(false);
+            setCurrentStep(0);
+            setBurger({ selections: new Map() });
         } catch (error: any) {
-            console.error("Order error detail:", error);
-            alert(error.message || "Sipariş oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+            console.error("Cart error:", error);
+            alert("Sepete eklenirken bir hata oluştu.");
         } finally {
             setSubmitting(false);
         }
     };
 
-    // Order success screen
-    if (orderSuccess) {
-        return (
-            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-                <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center"
-                >
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2, type: "spring" }}
-                        className="text-7xl mb-4"
-                    >
-                        ✅
-                    </motion.div>
-                    <h2 className="text-2xl font-bold text-white mb-2">
-                        Siparişiniz Alındı!
-                    </h2>
-                    <p className="text-gray-400 mb-6">
-                        Siparişiniz mutfağa iletildi. Lütfen masanızda bekleyin.
-                    </p>
-                    <div className="bg-black/30 rounded-2xl p-4 mb-6">
-                        <p className="text-sm text-gray-500 mb-1">Sipariş Numarası</p>
-                        <p className="text-2xl font-bold text-primary">{orderSuccess}</p>
-                        <div className="flex justify-between mt-3 text-sm">
-                            <span className="text-gray-500">Masa</span>
-                            <span className="text-white font-bold">{tableNumber}</span>
-                        </div>
-                        <div className="flex justify-between mt-1 text-sm">
-                            <span className="text-gray-500">Toplam</span>
-                            <span className="text-primary font-bold">₺{calculateTotal().toFixed(2)}</span>
-                        </div>
-                    </div>
-                    <button
-                        onClick={() => {
-                            setOrderSuccess(null);
-                            setBurger({ selections: new Map() });
-                            setCurrentStep(0);
-                            setShowOrderForm(false);
-                        }}
-                        className="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold py-4 rounded-2xl text-lg transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-[0.98]"
-                    >
-                        Yeni Burger Yap 🍔
-                    </button>
-                </motion.div>
-            </div>
-        );
-    }
-
+    // No order success screen anymore; we redirect directly.
     // Order form
     if (showOrderForm) {
         return (
@@ -454,7 +367,7 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
                 totalCalories={getTotalCalories()}
                 tableNumber={tableNumber}
                 onBack={goBack}
-                onSubmit={submitOrder}
+                onSubmit={addToCart}
                 submitting={submitting}
             />
         );
@@ -470,7 +383,7 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
                 <div className="max-w-lg mx-auto px-4 py-3">
                     {/* Progress bar */}
                     <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs text-gray-500">Masa {tableNumber}</span>
+                        <span className="text-xs text-gray-500">Masa {mounted ? tableNumber : ""}</span>
                         <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
@@ -559,7 +472,7 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
                                     onToggle={() =>
                                         toggleIngredient(ingredient, currentCategory.id)
                                     }
-                                    onQuantityChange={(delta) =>
+                                    onQuantityChange={(delta: number) =>
                                         updateQuantity(ingredient.id, currentCategory.id, delta)
                                     }
                                     onAllergenInfo={() => setShowAllergenInfo(ingredient.id)}
@@ -628,7 +541,7 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
                                     <>
                                         <div className="flex justify-between items-start mb-4">
                                             <h3 className="text-lg font-bold text-white">
-                                                {ing.name}
+                                                {ing?.name}
                                             </h3>
                                             <button
                                                 onClick={() => setShowAllergenInfo(null)}
@@ -641,22 +554,22 @@ export default function BurgerBuilder({ categories, tableNumber, branchId }: Pro
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-gray-400">Kalori</span>
                                                 <span className="text-white font-medium">
-                                                    {ing.calories} kcal
+                                                    {ing?.calories} kcal
                                                 </span>
                                             </div>
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-gray-400">Fiyat</span>
                                                 <span className="text-primary font-medium">
-                                                    {ing.price > 0 ? `+₺${ing.price}` : "Ücretsiz"}
+                                                    {ing?.price !== undefined && (ing?.price ?? 0) > 0 ? `+₺${ing?.price}` : "Ücretsiz"}
                                                 </span>
                                             </div>
-                                            {ing.allergens.length > 0 && (
+                                            {ing?.allergens && (ing?.allergens?.length ?? 0) > 0 && (
                                                 <div>
                                                     <p className="text-sm text-gray-400 mb-2">
                                                         Alerjenler:
                                                     </p>
                                                     <div className="flex flex-wrap gap-2">
-                                                        {ing.allergens.map((a) => (
+                                                        {ing?.allergens?.map((a: string) => (
                                                             <span
                                                                 key={a}
                                                                 className="px-3 py-1 bg-red-500/10 text-red-400 rounded-full text-xs font-medium"

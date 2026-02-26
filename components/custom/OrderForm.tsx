@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Send, Loader2, Star, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ShoppingBag, Loader2, Star, CheckCircle2 } from "lucide-react";
 import type { SelectedIngredient } from "./BurgerBuilder";
 
 interface Props {
@@ -29,6 +29,11 @@ export default function OrderForm({
     const [notes, setNotes] = useState("");
     const [saveAsFavorite, setSaveAsFavorite] = useState(true);
     const [favoriteName, setFavoriteName] = useState("");
+    const [acceptedKvkk, setAcceptedKvkk] = useState(false);
+
+    // KVK only required when user provides personal info
+    const hasPersonalInfo = name.trim().length > 0 || phone.trim().length > 0;
+    const kvkkRequired = hasPersonalInfo && !acceptedKvkk;
 
     // Group selections by category
     const grouped = selections.reduce((acc, sel) => {
@@ -182,6 +187,38 @@ export default function OrderForm({
                         rows={2}
                         className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-primary resize-none transition-colors"
                     />
+
+                    {/* KVKK Compliance - only shown when personal info is entered */}
+                    <AnimatePresence>
+                        {hasPersonalInfo && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden"
+                            >
+                                <div className="pt-4 border-t border-white/5">
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center pt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={acceptedKvkk}
+                                                onChange={(e) => setAcceptedKvkk(e.target.checked)}
+                                                className="peer h-5 w-5 appearance-none rounded-md border border-white/20 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+                                            />
+                                            <CheckCircle2
+                                                size={14}
+                                                className="absolute left-1 opacity-0 peer-checked:opacity-100 text-white transition-opacity pointer-events-none"
+                                            />
+                                        </div>
+                                        <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
+                                            <span className="text-white font-medium">KVKK Aydınlatma Metni'ni</span> okudum ve kişisel verilerimin bu kapsamda işlenmesini kabul ediyorum.
+                                        </span>
+                                    </label>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
 
@@ -190,19 +227,25 @@ export default function OrderForm({
                 <div className="max-w-lg mx-auto">
                     <motion.button
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => onSubmit(name, phone, notes, saveAsFavorite, favoriteName)}
+                        onClick={() => {
+                            if (kvkkRequired) {
+                                alert("Kişisel bilgi girdiniz. Devam etmek için lütfen KVKK Aydınlatma Metni'ni kabul etmelisiniz.");
+                                return;
+                            }
+                            onSubmit(name, phone, notes, saveAsFavorite, favoriteName);
+                        }}
                         disabled={submitting}
                         className="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold py-4 rounded-2xl text-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-3"
                     >
                         {submitting ? (
                             <>
                                 <Loader2 size={22} className="animate-spin" />
-                                Sipariş Gönderiliyor...
+                                Sepete Ekleniyor...
                             </>
                         ) : (
                             <>
-                                <Send size={20} />
-                                Siparişi Gönder • ₺{totalPrice.toFixed(2)}
+                                <ShoppingBag size={20} />
+                                Sepete Ekle • ₺{totalPrice.toFixed(2)}
                             </>
                         )}
                     </motion.button>

@@ -50,14 +50,27 @@ export default function ReportsPage() {
 
             if (monthErr) throw monthErr;
 
-            // 3. Fetch Ingredient Performance
+            const monthOrderIds = (monthOrders || []).map(o => o.id);
+
+            // 3. Fetch Order Items (order_burgers) for top products
+            const { data: orderItems, error: itemsErr } = await supabase
+                .from("order_burgers")
+                .select("*")
+                .in("order_id", monthOrderIds);
+
+            if (itemsErr) throw itemsErr;
+
+            // 4. Fetch Ingredient Performance for custom burgers
             const { data: ingPerformance, error: ingErr } = await supabase
                 .from("burger_ingredients")
                 .select(`
-          ingredient_name,
-          quantity,
-          unit_price
-        `);
+                    id,
+                    ingredient_name,
+                    quantity,
+                    unit_price,
+                    order_burger_id
+                `)
+                .in("order_burger_id", (orderItems || []).filter(i => i.is_custom).map(i => i.id));
 
             if (ingErr) throw ingErr;
 
@@ -73,7 +86,20 @@ export default function ReportsPage() {
                 hourlyData[h].revenue += Number(o.total_price);
             });
 
-            // Top Ingredients
+            // Unified Top Items (Products + Custom Components)
+            const itemMap: Record<string, { count: number; totalRev: number }> = {};
+
+            // Add products (non-custom burgers)
+            (orderItems || []).forEach(item => {
+                const itemName = item.is_custom ? "Özel Burger (Komple)" : item.burger_name;
+                if (!itemMap[itemName]) {
+                    itemMap[itemName] = { count: 0, totalRev: 0 };
+                }
+                itemMap[itemName].count++;
+                itemMap[itemName].totalRev += Number(item.total_price);
+            });
+
+            // Also track top ingredients for the interested admin
             const ingMap: Record<string, { count: number; totalRev: number }> = {};
             (ingPerformance || []).forEach(i => {
                 if (!ingMap[i.ingredient_name]) {
@@ -83,7 +109,7 @@ export default function ReportsPage() {
                 ingMap[i.ingredient_name].totalRev += i.quantity * Number(i.unit_price);
             });
 
-            const topIngredients = Object.entries(ingMap)
+            const topIngredients = Object.entries(itemMap)
                 .map(([name, data]) => ({ name, ...data }))
                 .sort((a, b) => b.count - a.count)
                 .slice(0, 8);
